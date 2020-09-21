@@ -15,4 +15,5 @@ This is an archive of Scratch images from Scratch 0.1 (2003) to Scratch 1.4 (200
 ### [djdolphin](https://scratch.mit.edu/users/djdolphin/)
 -The creator of [this archive](archive.glitch.pizza) (which doesn't exist anymore), archived (Meta-archive!) below.
 ### [The "WayBack Machine"](https://web.archive.org/)  
--[Scratch 0.1.image](https://web.archive.org/web/20190518015744/http://archive.glitch.pizza/mods/Scratch14Feb04.image) (Aka Scratch14Feb04.image (Actually from mid-2003))
+-[Scratch 0.1.image](https://web.archive.org/web/20190518015744/http://archive.glitch.pizza/mods/Scratch14Feb04.image) (Aka Scratch14Feb04.image (Actually from mid-2003))  
+No rights or ownership is claimed of these images. All images created by [MIT LLK Media Group](https://llk.media.mit.edu/)

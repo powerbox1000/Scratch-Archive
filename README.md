@@ -3,7 +3,7 @@ This is an archive of Scratch images from Scratch 0.1 (2003) to Scratch 1.4 (200
 
 ## Credits:
 ### [Xubiod](https://github.com/xubiod):
--(edited by me to not automatically connect to nonexistent main server) [NetScratch1.0.1.image](https://github.com/xubiod/scratch-archive/blob/master/NetScratch%201.0.1.image):  
+-(edited by me to not automatically connect to nonexistent main server) [NetScratch1.0.1.image](https://github.com/xubiod/scratch-archive/blob/master/NetScratch%201.0.1.image)  
 -[NetScratchServer.image](https://github.com/xubiod/scratch-archive/blob/master/NetScratchServer.image) ("mini-"server; not main server)  
 -[Some other images](https://github.com/xubiod/scratch-archive) (I can't remember which :/)
 ### [MIT LLK Media Group](https://llk.media.mit.edu/):  

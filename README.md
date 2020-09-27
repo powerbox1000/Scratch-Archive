@@ -4,6 +4,9 @@ This is an archive of Scratch images from Scratch 0.1 (2003) to Scratch 1.4 (200
 ## Credits:
 ### [Xubiod](https://github.com/xubiod):
 - [NetScratchServer.image](https://github.com/xubiod/scratch-archive/blob/master/NetScratchServer.image) ("mini-"server; not main server)  
+- [Scratch 1.2 Beta.image](https://github.com/xubiod/scratch-archive/blob/master/1.2beta.image)
+- [Scratch 1.4 Beta.image](https://github.com/xubiod/scratch-archive/blob/master/1.4beta.image)
+- [Scratch 1.4 Release Candidate.image](https://github.com/xubiod/scratch-archive/blob/master/Scratch%201.4%20rc.image)
 - [Some other images](https://github.com/xubiod/scratch-archive) (I can't remember which :/)
 ### [MIT LLK Media Group](https://llk.media.mit.edu/):  
 - [Scratch 0.2.image](https://llk.media.mit.edu/courses/software/scratch/mas714Scratch-old.html) (Aka Scratch13Oct04.zip)

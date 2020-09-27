@@ -10,7 +10,7 @@ This is an archive of Scratch images from Scratch 0.1 (2003) to Scratch 1.4 (200
 ### [Scratch Wiki](https://en.scratch-wiki.info/):
 - [Some images](https://en.scratch-wiki.info/wiki/Development_of_Scratch_1.0) (Again, I can't remember which)
 ### [Col_Cat228](https://scratch.mit.edu/users/Col_Cat228/):
--[This article on the Scratch Forums](https://scratch.mit.edu/discuss/topic/409440/?page=1) (Once again, some images)
+- [This article on the Scratch Forums](https://scratch.mit.edu/discuss/topic/409440/?page=1) (Once again, some images)
 ### [Billy Graydon](http://web.archive.org/web/20100903075459/http://streak.t35.com/downloads.html):  
 - His archive of images, including:  
 - [NetScratch 1.0.1.image](http://www.mediafire.com/file/kon4yzmiwod/NetScratch_1.0.1.image/file) (edited and re-uploaded by me to not try to connect to nonexistent master server)

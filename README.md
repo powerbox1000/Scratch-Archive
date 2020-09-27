@@ -18,7 +18,7 @@ This is an archive of Scratch images from Scratch 0.1 (2003) to Scratch 1.4 (200
 - His archive of images, including:  
 - [NetScratch 1.0.1.image](http://www.mediafire.com/file/kon4yzmiwod/NetScratch_1.0.1.image/file) (edited and re-uploaded by me to not try to connect to nonexistent master server)
 - [Streak (1.3.1) 0.1.image](http://www.mediafire.com/file/jybhzzenznd/Streak%25281.3.1%25290.1.image/file)  
-### [Snap! Build your own blocks](snap.berkeley.edu):
+### [Snap! / Build Your Own Blocks / BYOB](snap.berkeley.edu):
 - [BYOB 3.1.1.image](https://web.archive.org/web/20130424072729/http://snap.berkeley.edu/BYOB_3_1_1_110519_w_changes.zip)
 ### [djdolphin](https://scratch.mit.edu/users/djdolphin/):
 - The creator of [this archive](archive.glitch.pizza) (which doesn't exist anymore), archived (Meta-archive!) below.

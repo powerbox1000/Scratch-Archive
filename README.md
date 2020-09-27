@@ -30,4 +30,5 @@ This is an archive of Scratch images from Scratch 0.1 (2003) to Scratch 1.4 (200
 - [Billy Graydon's Archive](http://web.archive.org/web/20100903075459/http://streak.t35.com/downloads.html)
 - [BYOB 3.1.1.image](https://web.archive.org/web/20130424072729/http://snap.berkeley.edu/BYOB_3_1_1_110519_w_changes.zip)  
 
-No rights or ownership is claimed of any of these images. Scratch images created by [MIT LLK Media Group](https://llk.media.mit.edu/).
+No rights or ownership is claimed of any of these images. All Scratch images created by [MIT LLK Media Group](https://llk.media.mit.edu/).
+For some info and history, you can go to the Scratch-Archive Wiki [here](https://github.com/retro-person/Scratch-Archive/wiki).

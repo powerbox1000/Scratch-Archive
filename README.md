@@ -1,6 +1,5 @@
 # Scratch-Archive
-This is an archive of Scratch images from Scratch 0.1 (2003) to Scratch 1.4 (2008), the last Scratch version to use Squeak .image files, as well as NetScratch, a tested, but never officially released, version of Scratch with "shariables", or variables stored on a NetScratchServer, also available for download here. This archive also contains some non-Scratch (but Scratch-like) images, such as BYOB (aka Build Your Own Blocks or Snap!) and Streak (1.3.1) 0.1. These images also need a Squeak runtime engine, which can be found here: https://squeak.js.org/run/ I also have a tutorial how to use and install Scratch 0.1 and 0.2 [here](https://scratch.mit.edu/discuss/topic/436970/) I have also included a special version of Scratch 1.4 designed to run purely on the Raspberry Pi called GPIO Scratch. To compile it, run the .sh script using "sudo bash". Then, re-boot your Raspberry Pi and type "startx" to start it.
-
+This is an archive of Scratch images from Scratch 0.1 (2003) to Scratch 1.4 (2008), the last Scratch version to use Squeak .image files, as well as NetScratch, a tested, but never officially released, version of Scratch with "shariables", or variables stored on a NetScratchServer, also available for download here. This archive also contains some non-Scratch (but Scratch-like) images, such as BYOB (aka Build Your Own Blocks or Snap!) and Streak (1.3.1) 0.1. These images also need a Squeak runtime engine, which can be found here: https://squeak.js.org/run/ I also have a tutorial how to use and install Scratch 0.1 and 0.2 [here](https://scratch.mit.edu/discuss/topic/436970/) I have also included a special version of Scratch 1.4 designed to run purely on the Raspberry Pi called GPIO Scratch. For more info, see the "About Scratch GPIO" file in this repository.  
 ## Credits:
 ### [Xubiod](https://github.com/xubiod):
 - [NetScratchServer.image](https://github.com/xubiod/scratch-archive/blob/master/NetScratchServer.image) ("mini-"server; not main server)  
@@ -29,6 +28,9 @@ This is an archive of Scratch images from Scratch 0.1 (2003) to Scratch 1.4 (200
 - [Scratch 0.1.image](https://web.archive.org/web/20190518015744/http://archive.glitch.pizza/mods/Scratch14Feb04.image) (Aka Scratch14Feb04.image (Actually from mid-2003))  
 - [Billy Graydon's Archive](http://web.archive.org/web/20100903075459/http://streak.t35.com/downloads.html)
 - [BYOB 3.1.1.image](https://web.archive.org/web/20130424072729/http://snap.berkeley.edu/BYOB_3_1_1_110519_w_changes.zip)  
+### [CympleCy](https://github.com/cymplecy)
+- [Scratch GPIO 3.sh](https://github.com/cymplecy/scratch_gpio/blob/V5/installer/install_scratchgpio3.sh)
 
-No rights or ownership is claimed of any of these images. All Scratch images created by [MIT LLK Media Group](https://llk.media.mit.edu/).
+
+No rights or ownership is claimed of any of these files. All Scratch images created by [MIT LLK Media Group](https://llk.media.mit.edu/).
 For some info and history, you can go to the Scratch-Archive Wiki [here](https://github.com/retro-person/Scratch-Archive/wiki).

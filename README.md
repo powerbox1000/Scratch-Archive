@@ -29,7 +29,7 @@ This is an archive of Scratch images from Scratch 0.1 (2003) to Scratch 1.4 (200
 - [Billy Graydon's Archive](http://web.archive.org/web/20100903075459/http://streak.t35.com/downloads.html)
 - [BYOB 3.1.1.image](https://web.archive.org/web/20130424072729/http://snap.berkeley.edu/BYOB_3_1_1_110519_w_changes.zip)  
 ### [CympleCy](https://github.com/cymplecy)
-- [Scratch GPIO 3.sh](https://github.com/cymplecy/scratch_gpio/blob/V5/installer/install_scratchgpio3.sh)
+- [Scratch GPIO 3 Installer.sh](https://github.com/cymplecy/scratch_gpio/blob/V5/installer/install_scratchgpio3.sh)
 
 
 No rights or ownership is claimed of any of these files. All Scratch images created by [MIT LLK Media Group](https://llk.media.mit.edu/).

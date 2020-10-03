@@ -1,4 +1,8 @@
-Scratch GPIO is basically a version of Scratch 1.4 purely designed for the Raspberry Pi. It is pretty much a Scratch 1.4 image converted into a .sh file and 
-some extra .py files for different handlers. However, I have found that to use this, download this onto your Raspberry Pi and exactly type in the following
-command (without the SINGLE quotes): 'tail -n+22 "Scratch GPIO 3 Installer.sh' | tar xzv -C ." This should have installed the neccessary files. Now, once you are in your home
-directory, type this (again, without the quotes): "./installer.sh" Now, to start Scratch GPIO, type this (once again, without the quotes): "startx" That's it!
+Scratch GPIO is basically a version of Scratch 1.4 purely designed for the Raspberry Pi. It is
+pretty much an .sh file and some extra .py files for different handlers. But, believe it or not,
+this will work on any Linux machine, including a ChromeBook! First, download Scratch 1.4 for Linux
+by typing `sudo apt-get install scratch`. Then, download this file. Next, to install it, type: `sudo
+bash "Scratch GPIO 3 Installer.sh" yourlinuxusername`, replacing `yourlinuxusername` with your
+actual Linux username. This should have installed the neccessary files and created a directory
+called `scratchgpio`. Locate there and run `./scratchgpio3.sh`. You're done! And, if you happened to
+be installing this on an actual Raspberry Pi, then you'll get the inteded GPIO pin functionality!

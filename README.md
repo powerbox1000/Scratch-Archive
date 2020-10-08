@@ -28,9 +28,9 @@ This is an archive of Scratch images from Scratch 0.1 (2003) to Scratch 1.4 (200
 - [Scratch 0.1.image](https://web.archive.org/web/20190518015744/http://archive.glitch.pizza/mods/Scratch14Feb04.image) (Aka Scratch14Feb04.image (Actually from mid-2003))  
 - [Billy Graydon's Archive](http://web.archive.org/web/20100903075459/http://streak.t35.com/downloads.html)
 - [BYOB 3.1.1.image](https://web.archive.org/web/20130424072729/http://snap.berkeley.edu/BYOB_3_1_1_110519_w_changes.zip)  
-### [cymplecy](https://github.com/cymplecy)
+### [cymplecy](https://github.com/cymplecy):
 - [Scratch GPIO 3 Installer.sh](https://github.com/cymplecy/scratch_gpio/blob/V5/installer/install_scratchgpio3.sh)
-### [djdolphin and technoboy10's Scratch Archive](http://archive.glitch.pizza)
+### [djdolphin and technoboy10's Scratch Archive](http://archive.glitch.pizza):
 - [BYOB 2.0.image](https://github.com/retro-person/Scratch-Archive/blob/master/BYOB%202.0.image)
 - [Chirp.image](https://github.com/retro-person/Scratch-Archive/blob/master/Chirp.image)
 - [Panther 1.0.image](https://github.com/retro-person/Scratch-Archive/blob/master/Panther%201.0.image)

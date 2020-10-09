@@ -34,6 +34,11 @@ This is an archive of Scratch images from Scratch 0.1 (2003) to Scratch 1.4 (200
 - [BYOB 2.0.image](https://github.com/retro-person/Scratch-Archive/blob/master/BYOB%202.0.image)
 - [Chirp.image](https://github.com/retro-person/Scratch-Archive/blob/master/Chirp.image)
 - [Panther 1.0.image](https://github.com/retro-person/Scratch-Archive/blob/master/Panther%201.0.image)
+### [-GUI--CUI](https://scratch.mit.edu/users/-GUI--CUI-/):
+- [Scratch 2.0 Beta.swf](http://subversion.assembla.com/svn/scratchr/app/webroot/static/experimental/Scratch.swf)
+### A Scratch Upload Website (???):
+- [Scratch 2.0.air](https://uploads.scratch.mit.edu/scratchr2/static/sa/Scratch-461.air)
+- [Adobe AIR Installer.bin](http://airdownload.adobe.com/air/lin/download/2.6/AdobeAIRInstaller.bin)
 
-No rights or ownership is claimed of any of these files. All Scratch images created by [MIT LLK Media Group](https://llk.media.mit.edu/).
+No rights or ownership is claimed of any of these files. All Scratch files created by [MIT LLK Media Group](https://llk.media.mit.edu/).
 For some info and history, you can go to the Scratch-Archive Wiki [here](https://github.com/retro-person/Scratch-Archive/wiki).

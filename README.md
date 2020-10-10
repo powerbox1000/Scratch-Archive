@@ -34,7 +34,7 @@ This is an archive of Scratch images from Scratch 0.1 (2003) to Scratch 2.0 (201
 - [BYOB 2.0.image](https://github.com/retro-person/Scratch-Archive/blob/master/BYOB%202.0.image)
 - [Chirp.image](https://github.com/retro-person/Scratch-Archive/blob/master/Chirp.image)
 - [Panther 1.0.image](https://github.com/retro-person/Scratch-Archive/blob/master/Panther%201.0.image)
-### [-GUI--CUI](https://scratch.mit.edu/users/-GUI--CUI-/):
+### [-GUI--CUI-](https://scratch.mit.edu/users/-GUI--CUI-/):
 - [Scratch 2.0 Beta.swf](http://subversion.assembla.com/svn/scratchr/app/webroot/static/experimental/Scratch.swf)
 ### A Scratch Upload Website (???):
 - [Scratch 2.0 for Linux.air](https://uploads.scratch.mit.edu/scratchr2/static/sa/Scratch-461.air)(Actually, it works on any computer with Adobe AIR)

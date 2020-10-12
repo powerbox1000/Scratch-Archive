@@ -37,10 +37,10 @@ This is an archive of Scratch images from Scratch 0.1 (2003) to Scratch 2.0 (201
 ### [-GUI--CUI-](https://scratch.mit.edu/users/-GUI--CUI-/):
 - [Scratch 2.0 Beta.swf](http://subversion.assembla.com/svn/scratchr/app/webroot/static/experimental/Scratch.swf)
 ### A Scratch Upload Website (???):
-- [Scratch 2.0 for Linux.air](https://uploads.scratch.mit.edu/scratchr2/static/sa/Scratch-461.air)(Actually, it works on any computer with Adobe AIR)
+- [Scratch 2.0 for Linux.air](https://uploads.scratch.mit.edu/scratchr2/static/sa/Scratch-461.air) (Actually, it works on any computer with Adobe AIR)
 - [Adobe AIR Installer.bin](http://airdownload.adobe.com/air/lin/download/2.6/AdobeAIRInstaller.bin)
 ### https://s2online.github.io:
-- [Scratch 2.0.swf](https://s2online.github.io/build/11.6/Scratch.swf)(A.K.A. Scratch 2.0 for Linux.air but for online use with a Flash Player)
+- [Scratch 2.0.swf](https://s2online.github.io/build/11.6/Scratch.swf) (A.K.A. Scratch 2.0 for Linux.air but for online use with a Flash Player)
 
 No rights or ownership is claimed of any of these files. All Scratch files created by [MIT LLK Media Group](https://llk.media.mit.edu/).
 For some info and history, you can go to the Scratch-Archive Wiki [here](https://github.com/retro-person/Scratch-Archive/wiki).

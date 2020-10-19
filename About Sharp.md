@@ -1,1 +1,0 @@
-Sharp is another offshoot of Scratch. Please see the "About Scratch 2.0 and 2.0 Beta.md" file in this repository for more info on how to run .swf files, as well as links to a Flash-supporting Chrome version and online Flash player.

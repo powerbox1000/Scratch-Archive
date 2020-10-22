@@ -1,1 +1,1 @@
-
+So, when you launch the Scratch mod Ghost, it will not fit in the Squeak window. To fix this, click "File" on top while holding the "shift" key, and then click "Enter User Mode", and it will work just fine!

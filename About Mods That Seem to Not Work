@@ -1,0 +1,1 @@
+So, some Scratch mods in this repository seem to freeze. In reality, this is them trying and failing to connect to a mesh server. However, these mods do work: after 30 seconds, the mod will show an error. Just click the "Abandon" button on these errors, and the mod will work just fine!

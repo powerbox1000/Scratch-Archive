@@ -1,0 +1,5310 @@
+'From MIT Squeak 0.9.4 (June 1, 2003) [No updates present.] on 11 July 2015 at 9:11:30 am'!
+"Change Set:		Jens Elements
+Date:			13 February 2009
+Author:			Jens Moenig
+
+a graphical Smalltalk"!
+
+Morph subclass: #ClassChooserMorph
+	instanceVariableNames: 'class label button frame '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements-UI'!
+Morph subclass: #ElementPaletteMorph
+	instanceVariableNames: 'elements variables '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements-UI'!
+ElementPaletteMorph class
+	instanceVariableNames: ''!
+Morph subclass: #ElementsButtonMorph
+	instanceVariableNames: 'target selector '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements-UI'!
+Morph subclass: #ElementsMethodEditorMorph
+	instanceVariableNames: 'classChooser methodChooser sideChooser palette editor saver methodModified fillScreenOn currentMethod currentClass '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements-UI'!
+Morph subclass: #ElementsPaletteFrameMorph
+	instanceVariableNames: 'header palette editorFrame currentClass '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements-UI'!
+BorderedMorph subclass: #ElementsScrollFrameMorph
+	instanceVariableNames: 'contents hScrollbar vScrollbar cornerMorph hbarInset vbarInset contentsChanged growthFraction '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements-UI'!
+
+!ElementsScrollFrameMorph commentStamp: '<historical>' prior: 0!
+I have largely been copied from the Scratch-UI which was originally written by John Maloney and Evelyn Eastmond!
+ElementsButtonMorph subclass: #ElementsToggleButtonMorph
+	instanceVariableNames: 'onColor offColor label on specialEffect '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements-UI'!
+ElementsToggleButtonMorph subclass: #ElementsDoubleToggleMorph
+	instanceVariableNames: 'chooser '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements-UI'!
+Morph subclass: #InstanceClassSwitchMorph
+	instanceVariableNames: 'instance class choice frame '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements-UI'!
+ClassChooserMorph subclass: #MethodChooserMorph
+	instanceVariableNames: 'selector '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements-UI'!
+Morph subclass: #PaletteFrameHeadMorph
+	instanceVariableNames: 'classChooser basics variables classes messages choice lastMsgChoice frame methodsClass '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements-UI'!
+StringMorph subclass: #StringElementMorph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements'!
+Morph subclass: #SyntaxElementMorph
+	instanceVariableNames: 'label name '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements'!
+SyntaxElementMorph subclass: #ArgumentElementMorph
+	instanceVariableNames: 'contents oldColor '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements'!
+SyntaxElementMorph subclass: #BlockElementMorph
+	instanceVariableNames: 'palette steps '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements'!
+SyntaxElementMorph subclass: #LiteralElementMorph
+	instanceVariableNames: 'textBox contents '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements'!
+SyntaxElementMorph subclass: #MessageElementMorph
+	instanceVariableNames: 'receiver selector arguments labels cascade '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements'!
+BlockElementMorph subclass: #MethodElementMorph
+	instanceVariableNames: 'header '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements'!
+SyntaxElementMorph subclass: #ObjectElementMorph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements'!
+SyntaxElementMorph subclass: #PaletteElementMorph
+	instanceVariableNames: 'variables '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements'!
+PaletteElementMorph subclass: #MessageHeaderElementMorph
+	instanceVariableNames: 'selector labels arguments '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements'!
+SyntaxElementMorph subclass: #StepElementMorph
+	instanceVariableNames: 'expression next oldColor '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements'!
+StepElementMorph subclass: #PrimitiveElementMorph
+	instanceVariableNames: 'textBox '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements'!
+StepElementMorph subclass: #ReturnElementMorph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements'!
+ArgumentElementMorph subclass: #StepHolderElementMorph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements'!
+SyntaxElementMorph class
+	instanceVariableNames: ''!
+MessageElementMorph class
+	instanceVariableNames: ''!
+ArgumentElementMorph subclass: #TextBoxElementMorph
+	instanceVariableNames: 'doResizing insetX heightPadding stringMorph insetY selectionColor selectionEnd selectionStart undoState blinkState lastContents isKeyboardFocus acceptWhenFocusLost frame isNumeric client dragStartIndex isEditable '
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements'!
+ElementsButtonMorph subclass: #TriangleButtonMorph
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Elements-UI'!
+
+!ClassChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 21:58'!
+chooseClass
+
+	|menu list packages pkg pkgMenu catMenu |
+	packages _ Dictionary new.
+	SystemOrganization categories asSortedCollection do: [:cat |
+		pkg _ (cat asString findTokens: #( $- )) first.
+		(packages includesKey: pkg)
+			ifFalse: [ packages at: pkg put: OrderedCollection new].
+		(packages at: pkg) add: cat].
+
+	menu _ MenuMorph new.
+	packages keys asSortedCollection do: [:eachPkg |
+		pkgMenu _ MenuMorph new.
+		(packages at: eachPkg) asSortedCollection do: [: cat |
+			catMenu _ self menuForCategory: cat.
+			pkgMenu add: (self wordsFrom: cat asString)
+					subMenu: catMenu ].
+		"pkgMenu add: (self wordsFrom: eachPkg asString)
+				subMenu: pkgMenu."
+		menu add: eachPkg subMenu: pkgMenu ].
+
+
+
+"
+	list _ SystemOrganization categories asSortedCollection.
+	list do: [:each|
+		menu add: (self wordsFrom: each asString) subMenu: (self menuForCategory: each)].
+"
+	menu popUpAt: button center x @ (self bottom + 5) forHand: World activeHand! !
+
+!ClassChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/6/2009 12:30'!
+class: aClass
+	| classToSet |
+	classToSet _ aClass.
+
+	frame ifNotNil: [
+		(frame currentSide = #class)
+		& (aClass isKindOf: Metaclass) not
+			ifTrue: [ classToSet _ aClass class ]].
+
+	class = classToSet ifTrue: [^self].
+	class _ classToSet.
+	label ifNil: [
+		label _ StringMorph contents: '' font: self labelFont.
+		label color: self labelColor.
+		self addMorphFront: label ].
+	label contents: (self wordsFrom: class name asString).
+	self fitMorphs.
+
+	frame ifNotNil: [
+		frame selectClass: class]! !
+
+!ClassChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 23:21'!
+fitMorphs
+	button extent: (label height @ label height) * 2//3.
+	button position: self left @ self top + (label height - button height // 2).
+	label position: (button right + (button width // 3)) @ self top.
+	self extent: label bottomRight - self position! !
+
+!ClassChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 22:06'!
+frame: aMorph
+	frame _ aMorph! !
+
+!ClassChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 01:34'!
+handlesMouseDown: evt
+	^ true
+! !
+
+!ClassChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 23:20'!
+initialize
+	super initialize.
+	self color: Color gray.
+	self addMorph: (button _ TriangleButtonMorph new
+				target: self;
+				selector: #chooseClass)
+	! !
+
+!ClassChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 22:46'!
+labelColor
+	^Color white! !
+
+!ClassChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 01:23'!
+labelFont
+	^StrikeFont fontName: 'VerdanaBold' size: 12! !
+
+!ClassChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 22:41'!
+menuForCategory: categoryName
+
+	|menu list |
+	menu _ MenuMorph new
+				defaultTarget: self.
+	list _ SystemOrganization listAtCategoryNamed: categoryName.
+	list asSortedCollection do: [:each|
+		menu add: (self wordsFrom: each asString) selector: #class: argument: (Smalltalk classNamed: each)].
+	^menu
+! !
+
+!ClassChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 01:35'!
+mouseDown: evt
+	self chooseClass! !
+
+!ClassChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/4/2009 08:33'!
+selectedClass
+	^class! !
+
+!ClassChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 22:09'!
+wordsFrom: camelCase
+	^SyntaxElementMorph wordsFrom: camelCase
+! !
+
+
+!ElementPaletteMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/2/2009 22:20'!
+addElement: anElement
+	|maxWidth|
+	self addMorph: anElement.
+	elements isEmpty
+		ifTrue:[ anElement position: self position + (2@2)]
+		ifFalse: [ anElement position: self position + (2@(elements last bottom + 2)) ].
+	elements add: anElement.
+	self height: (elements last bottom + 2) - (self top).
+	maxWidth _ elements last width + 4.
+	elements do: [:element|
+		maxWidth _ (element width + 4) max: maxWidth ].
+	self width: maxWidth! !
+
+!ElementPaletteMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 22:44'!
+initialize
+	super initialize.
+	elements _ OrderedCollection new.
+	color _ Color gray.! !
+
+!ElementPaletteMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/12/2009 22:50'!
+isPartsBin
+
+	^ true
+! !
+
+!ElementPaletteMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 20:46'!
+rootForGrabOf: aMorph
+	"I act like a parts bin; answer a new copy of the morph being extracted."
+
+	| v |
+
+	v _ aMorph ownerThatIsA: SyntaxElementMorph.
+	v ifNotNil: [
+		(v isKindOf: ArgumentElementMorph)
+			ifTrue: [^v owner fullCopy].
+		^v fullCopy].
+
+	^nil! !
+
+
+!ElementPaletteMorph class methodsFor: 'as yet unclassified' stamp: 'jens 6/2/2009 22:31'!
+basics
+	^self new
+		addElement: StepElementMorph new;
+		addElement: ReturnElementMorph new;
+		addElement: PrimitiveElementMorph new;
+		addElement: BlockElementMorph new;
+		addElement: (ObjectElementMorph new label: 'self');
+		addElement: (ObjectElementMorph new label: 'super');
+		addElement: (ObjectElementMorph new label: 'true');
+		addElement: (ObjectElementMorph new label: 'false');
+"		addElement: (ObjectElementMorph new label: 'thisContext');"
+		addElement: (LiteralElementMorph new);
+"		addElement: (MessageElementMorph new selector: #new);"
+		addElement: MessageElementMorph new assign;
+		addElement: MessageElementMorph new yesNo
+! !
+
+!ElementPaletteMorph class methodsFor: 'as yet unclassified' stamp: 'jens 6/2/2009 22:55'!
+classVarsFor: aClass
+	| pal |
+	pal _ self new.
+	aClass classVarNames asSortedCollection do: [:vname|
+		pal addElement: (ObjectElementMorph new label: vname asString) ].
+
+	pal addElement: ((StringMorph contents: ' inherited:' font: self labelFont) color: self labelColor).
+
+	(aClass allClassVarNames reject: [:iv | aClass classVarNames includes: iv]) asSortedCollection do: [:vname|
+		pal addElement: (ObjectElementMorph new label: vname asString) ].
+
+	^pal
+! !
+
+!ElementPaletteMorph class methodsFor: 'as yet unclassified' stamp: 'jens 2/2/2009 22:42'!
+classes
+	| pal |
+	pal _ self new.
+	Smalltalk classNames asSortedCollection do: [:class|
+		pal addElement: (ObjectElementMorph new label: class asString) ].
+	^pal
+! !
+
+!ElementPaletteMorph class methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 00:20'!
+currentPackageClasses: aClass
+	| pal packages pkg |
+	pkg _ ((SystemOrganization categoryOfElement: aClass name asSymbol) asString findTokens: #( $- )) first.
+	packages _ self packageClassesDict.
+	pal _ self new.
+	(packages at: pkg) asSortedCollection do: [:class|
+		pal addElement: (ObjectElementMorph new label: class asString) ].
+	^pal
+! !
+
+!ElementPaletteMorph class methodsFor: 'as yet unclassified' stamp: 'jens 2/2/2009 22:41'!
+globals
+	| pal |
+	pal _ self new.
+	(Smalltalk keys reject: [:key| Smalltalk classNames includes: key]) asSortedCollection do: [:global|
+		pal addElement: (ObjectElementMorph new label: global asString) ].
+	^pal
+! !
+
+!ElementPaletteMorph class methodsFor: 'as yet unclassified' stamp: 'jens 6/2/2009 22:53'!
+instVarsFor: aClass
+	| pal |
+	pal _ self new.
+	aClass instVarNames asSortedCollection do: [:vname|
+		pal addElement: (ObjectElementMorph new label: vname asString) ].
+
+	pal addElement: ((StringMorph contents: ' inherited:' font: self labelFont) color: self labelColor).
+
+	(aClass allInstVarNames reject: [:iv | aClass instVarNames includes: iv]) asSortedCollection do: [:vname|
+		pal addElement: (ObjectElementMorph new label: vname asString) ].
+
+	^pal
+! !
+
+!ElementPaletteMorph class methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 01:24'!
+labelColor
+	^Color darkGray twiceDarker! !
+
+!ElementPaletteMorph class methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 01:32'!
+labelFont
+	^StrikeFont fontName: 'Verdana' size: 9! !
+
+!ElementPaletteMorph class methodsFor: 'as yet unclassified' stamp: 'jens 6/2/2009 22:51'!
+messagesFor: aClass
+	
+	| pal me |
+	pal _ self new.
+	pal addElement: ((StringMorph contents: (SyntaxElementMorph wordsFrom: aClass name asString) font: self labelFont) color: self labelColor).
+	aClass selectors asSortedCollection do: [:selector|
+		me _ MessageElementMorph new selector: selector.
+		((selector asString includes: ($:)) not and: [
+			(aClass lookupSelector: selector) numArgs > 0])
+				ifTrue: [me beBinary].
+		pal addElement: me ].
+
+	pal addElement: ((StringMorph contents: ' inherited:' font: self labelFont) color: self labelColor).
+
+	(aClass allSelectors reject:[:sel| aClass selectors includes: sel ]) asSortedCollection do: [:selector|
+		me _ MessageElementMorph new selector: selector.
+		((selector asString includes: ($:)) not and: [
+			(aClass lookupSelector: selector) numArgs > 0])
+				ifTrue: [me beBinary].
+		pal addElement: me ].
+
+
+	^pal
+! !
+
+!ElementPaletteMorph class methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 00:16'!
+messagesForSelf: aClass
+	
+	| pal me|
+	pal _ self new.
+	aClass allSelectors asSortedCollection do: [:selector|
+		me _ MessageElementMorph new selector: selector.
+		((selector asString includes: ($:)) not and: [
+			(aClass lookupSelector: selector) numArgs > 0])
+				ifTrue: [me beBinary].
+		me receiver: (ObjectElementMorph new label: 'self').
+		pal addElement: me ].
+	^pal
+! !
+
+!ElementPaletteMorph class methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 00:10'!
+packageClassesDict
+	| packages pkg ans |
+	packages _ Dictionary new.
+	ans _ Dictionary new.
+	SystemOrganization categories asSortedCollection do: [:cat |
+		pkg _ (cat asString findTokens: #( $- )) first.
+		(packages includesKey: pkg) ifFalse: [
+				packages at: pkg put: OrderedCollection new.
+				ans at: pkg put: OrderedCollection new].
+		(packages at: pkg) add: cat].
+
+	packages keys do: [:eachPkg |
+		(packages at: eachPkg) do: [: cat |
+			(ans at: eachPkg) addAll:  (SystemOrganization listAtCategoryNamed: cat) ]].
+	^ans! !
+
+
+!ElementsButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 23:07'!
+borderColorDark
+	^color twiceDarker! !
+
+!ElementsButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 23:07'!
+borderColorLight
+	^color twiceLighter lighter! !
+
+!ElementsButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 23:07'!
+borderColorVeryDark
+	^color twiceDarker darker! !
+
+!ElementsButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 23:07'!
+borderColorVeryLight
+	^color twiceLighter twiceLighter lighter! !
+
+!ElementsButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 23:06'!
+borderWidth
+	^1
+! !
+
+!ElementsButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 20:55'!
+handlesMouseDown: evt
+	^ true
+! !
+
+!ElementsButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 23:46'!
+labelColor
+	^Color white! !
+
+!ElementsButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 23:46'!
+labelFont
+	^StrikeFont fontName: 'VerdanaBold' size: 12! !
+
+!ElementsButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 20:59'!
+mouseDown: evt
+	target perform: selector! !
+
+!ElementsButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 20:58'!
+selector: aSelector
+	selector _ aSelector! !
+
+!ElementsButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 20:58'!
+target: anObject
+	target _ anObject! !
+
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'EMP 7/11/2015 09:06'!
+about
+	self inform: '- Elements -
+
+a graphical Smalltalk
+------------------------------
+experimental release of Aug. 24 2009
+ 
+written by Jens Mönig (jens@moenig.org)
+ported by Edward P. (epedemont@icloud.com)
+all rights reserved
+ 
+inspired by Scratch from the MIT Media Lab
+and based in part on the Scratch Source Code.
+Implemented in Squeak and in itself.'! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/24/2009 23:05'!
+arrangeElements
+	| current x y spacing |
+	spacing _ 5.
+	current _ self currentMethodElement.
+	x _ editor contents left + spacing.
+	y _ current stackBottom + spacing.
+	editor contents submorphsDo: [:element |
+		(element == current) ifFalse:[
+			element position: x @ y.
+			y _ element bottom + spacing ]]
+		! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 15:47'!
+arrangePanes
+	classChooser position: self topLeft + 2.
+	sideChooser position: classChooser bottomLeft.
+	methodChooser position: sideChooser bottomLeft.
+	editor position: (self left + 4) @ (methodChooser bottom + 4);
+		extent: (self width - 180 - 8) @ (self bottom - editor top - 4).
+	palette position: editor right @ (classChooser bottom);
+		height: self bottom - palette top - 4;
+		arrangePanes.
+	saver position: (self position x + (palette left - methodChooser right - saver width // 2) ) @ (methodChooser bottom - saver height)
+! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/24/2009 22:36'!
+buildPanes
+	| p m |
+	classChooser _ ClassChooserMorph new frame: self; class: Object.
+	sideChooser _ InstanceClassSwitchMorph new frame: self.
+	methodChooser _ MethodChooserMorph new frame: self; class: Object; selector: #yourself.
+	editor _ ElementsScrollFrameMorph new
+				color: Color gray;
+				borderColor: Color gray.
+	p _ PasteUpMorph new borderWidth: 0; color: Color gray darker.
+	m _ MethodElementMorph new selector: '' arguments: #().
+	editor contents: p.
+	p addMorph: m.
+
+	palette _ ElementsPaletteFrameMorph new editorFrame: self; height: self height; arrangePanes.
+	saver _ ElementsToggleButtonMorph new flat; label: 'save'; onColor: color offColor: color; target: self; selector: #saveCurrentMethod.
+	self
+		addMorph: classChooser;
+		addMorph: sideChooser;
+		addMorph: methodChooser;
+		addMorph: editor;
+		addMorph: palette;
+		addMorph: saver.
+	saver isHidden: true! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 01:29'!
+contextMenu
+	|m|
+	m _ CustomMenu new.
+	m add: 'clean up' action: #arrangeElements.
+"
+	m addLine.
+	fillScreenOn
+		ifTrue: [
+			m add: 'switch to development mode' action: #developmentMode.
+]
+		ifFalse: [m add: 'switch to user mode' action: #userMode.
+			m add: 'save image in user mode' action: #saveImage ].
+"
+	m addLine.
+	m add: 'about...' action: #about.
+
+	^m! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/6/2009 12:21'!
+currentClass
+	^currentClass! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 22:24'!
+currentMethodElement
+	^editor contents findA: MethodElementMorph
+	! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/6/2009 12:01'!
+currentSide
+	sideChooser ifNil: [^#instance ].
+	^sideChooser choice! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 17:35'!
+developmentMode
+	fillScreenOn _ false.
+	self
+		position: World topLeft;
+		extent: World extent - 50;
+		arrangePanes.
+	palette arrangePanes.	
+	Preferences disable: #noviceMode.
+	Preferences enable: #warnIfNoSourcesFile.
+	Preferences enable: #warnIfNoChangesFile.
+
+! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 17:28'!
+handlesMouseDown: evt
+	"Return true if this morph wants to receive mouseDown events (i.e., mouseDown:, mouseMove:, mouseUp:). The default response is false; subclasses that implement mouse messages should override this to return true." 
+
+	^ true
+! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 02:44'!
+initialize
+	fillScreenOn _ false.
+	methodModified _ false.
+	currentClass _ Object.
+	currentMethod _ #yourself.
+	super initialize.
+	self extent: 600 @ 400.
+	color _ Color gray.
+	self buildPanes.
+	self arrangePanes.
+	self refresh! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 17:29'!
+invokeContextMenu
+	|m choice|
+	m _ self contextMenu.
+	m ifNotNil: [
+		choice _ m startUp.
+		choice ifNotNil: [self perform: choice] ]! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 13:22'!
+maximize
+	((self position = World position) and: [
+		self extent = World extent])
+		ifTrue: [^self].
+	self
+		position: World topLeft;
+		extent: World extent;
+		arrangePanes.
+	palette arrangePanes.
+	self comeToFront
+! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 15:48'!
+methodModified
+	methodModified _ true.
+	saver isHidden: false.
+	saver position: (self position x + (palette left - methodChooser right - saver width // 2) ) @ (methodChooser bottom - saver height)! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/24/2009 22:47'!
+methodTemplate
+	| m |
+	m _ MethodElementMorph new selector: '' arguments: #().
+	self currentMethodElement delete.
+	m position: editor contents position.
+	editor contents addMorph: m fitMethod.
+	self isInWorld ifFalse: [^self].
+	methodChooser selector: nil.
+	self methodUnmodified! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 02:32'!
+methodUnmodified
+	methodModified _ false.
+	saver isHidden: true! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 10:46'!
+mouseDown: evt
+	"Handle a mouse down event."
+
+	evt rightButtonPressed
+		ifTrue: [ ^self invokeContextMenu].
+	Preferences noviceMode ifTrue: [^self].
+	self startDrag: evt
+! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 01:09'!
+refresh
+	self methodTemplate! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 23:58'!
+saveCurrentMethod
+	| se sel|
+	se _ self currentMethodElement.
+	sel _ se selector.
+
+	currentClass compile: se asSmalltalk
+					classified: ClassOrganizer nullCategory
+					notifying: nil.
+
+	methodChooser selector: sel.
+	self selectMethod: sel.
+	palette refresh! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 01:07'!
+saveImage
+
+	self userMode.
+	self maximize.
+	World allMorphsDo: [:m|
+		(m isKindOf: SystemWindow)
+			ifTrue: [m delete ]].
+	World activeHand saveAndQuit! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/7/2009 20:50'!
+selectClass: aClass
+	editor ifNil: [^self].
+	(currentClass = aClass)
+		ifTrue: [^self].
+
+	currentClass _ aClass.
+	classChooser class: currentClass.
+	methodChooser class: currentClass.
+	palette class: currentClass.
+	self methodTemplate
+	! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/24/2009 21:28'!
+selectMethod: aSelector
+	| myMethod temps se |
+
+	currentMethod _ aSelector.
+	editor ifNil: [^self].
+	currentMethod ifNil: [^self].
+	currentClass ifNotNil:
+		[myMethod _ currentClass compiledMethodAt: currentMethod ifAbsent: [^self methodTemplate].
+		temps _ (currentClass compilerClass new
+						parse: myMethod getSourceFromFile asString in: currentClass notifying: nil)
+						tempNames.
+
+	se _ ((currentClass decompilerClass new withTempNames: temps)
+		decompile: currentMethod in: currentClass method: myMethod) asSyntaxElement.
+
+	self currentMethodElement delete.
+	se position: editor contents position.
+	editor contents addMorph: se fitMethod.
+
+	^self methodUnmodified.
+		].
+
+	^self methodTemplate
+
+! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 17:38'!
+step
+	fillScreenOn 
+		ifTrue: [self maximize]
+		ifFalse: [^self arrangePanes].! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 20:10'!
+stepTime
+	^0! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/6/2009 11:17'!
+switchToClassSide
+
+	self selectClass: currentClass class! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/6/2009 11:17'!
+switchToInstanceSide
+
+	self selectClass: currentClass allInstances first.! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 17:33'!
+userMode
+
+	fillScreenOn _ true.
+	Preferences enable: #noviceMode.
+	Preferences disable: #warnIfNoSourcesFile.
+	Preferences disable: #warnIfNoChangesFile.
+
+! !
+
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 20:30'!
+acceptDroppingMorph: aMorph event: evt
+	"This message is sent when a morph is dropped onto a morph that has agreed to accept the dropped morph by responding 'true' to the wantsDroppedMorph:Event: message. This default implementation just adds the given morph to the receiver."
+
+	aMorph delete
+! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 20:14'!
+arrangePanes
+	header position: self position;
+		width: self width;
+		arrangePanes.
+	palette position: self left @ header bottom;
+		extent: self width @ (self height - header height)! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 01:25'!
+buildPanes
+	header _ PaletteFrameHeadMorph new frame: self.
+	palette _ ElementsScrollFrameMorph new
+				color: Color gray;
+				borderColor: Color gray.
+	self
+		addMorph: header;
+		addMorph: palette.! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/7/2009 22:06'!
+class: aClass
+	currentClass _ aClass.
+	header adjustToClass: currentClass.
+	self refresh! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 21:17'!
+classMenu
+	|menu|
+	menu _ MenuMorph new defaultTarget: self.
+	menu add: 'create a subclass...' action: #createSubclass.
+	menu add: 'remove a class...' action: #removeClass.
+	^menu! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 21:40'!
+classVarMenu
+	|menu|
+	menu _ MenuMorph new defaultTarget: self.
+	menu add: 'add a class variable...' action: #createClassVar.
+	menu add: 'remove a variable...' action: #removeClassVar.
+	^menu! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/11/2009 02:41'!
+contextMenu
+	| choice |
+	choice _ header choice.
+	(#basics = choice) ifTrue: [^nil ].
+
+	(#(allClasses #currentPackageClasses) includes: choice) ifTrue: [
+		^self classMenu].
+
+	(#variables = choice) ifTrue: [
+		(currentClass isMeta)
+			ifTrue: [ ^self classVarMenu]
+			ifFalse: [ ^self instanceVarMenu ]].
+
+	(#instanceVars = choice) ifTrue: [^self instanceVarMenu].
+
+	(#classVars = choice) ifTrue: [^self classVarMenu].
+
+	(#globalVars = choice) ifTrue: [ ^self globalVarMenu].
+
+	(#currentMessages = choice) ifTrue: [^self methodMenu].
+
+	(#methodsClass = choice) ifTrue: [^nil ].! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 21:41'!
+createClassVar
+	|varName current|
+	currentClass isMeta
+		ifTrue: [current _ currentClass theNonMetaClass ]
+		ifFalse: [current _ currentClass ].
+
+	varName _ FillInTheBlank request: 'variable name:' initialAnswer: ''.
+	varName isEmpty ifTrue: [^self].
+	current addClassVarName: varName.
+	self refresh		! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 21:07'!
+createGlobalVar
+	|varName |
+
+	varName _ FillInTheBlank request: 'variable name:' initialAnswer: ''.
+	varName isEmpty ifTrue: [^self].
+	varName _ SyntaxElementMorph classNameFrom: varName.
+	(Smalltalk includesKey: varName asSymbol)
+		ifTrue: [^self inform: varName, ' is already in use'].
+	Smalltalk at: varName asSymbol put: nil.
+	self refresh		! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 21:08'!
+createInstVar
+	|varName current|
+	currentClass isMeta
+		ifTrue: [current _ currentClass theNonMetaClass ]
+		ifFalse: [current _ currentClass ].
+
+	varName _ FillInTheBlank request: 'variable name:' initialAnswer: ''.
+	varName isEmpty ifTrue: [^self].
+	varName _ SyntaxElementMorph objectNameFrom: varName.
+	current addInstVarName: varName.
+	self refresh		! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 21:09'!
+createSubclass
+	|className categoryName current newClass|
+	currentClass isMeta
+		ifTrue: [current _ currentClass theNonMetaClass ]
+		ifFalse: [current _ currentClass ].
+
+	className _ FillInTheBlank request: 'class name:' initialAnswer: ''.
+	className isEmpty ifTrue: [^self].
+	categoryName _ FillInTheBlank request: 'category:' initialAnswer: 'UserObjects'.
+	categoryName isEmpty ifTrue: [^self].
+
+	className _ SyntaxElementMorph classNameFrom: className.
+
+	newClass _ current subclass: className asSymbol
+		instanceVariableNames: ''
+		classVariableNames: ''
+		poolDictionaries: ''
+		category: categoryName.
+
+	editorFrame selectClass: newClass
+
+		! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/7/2009 21:12'!
+currentClass
+	^currentClass! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 12:48'!
+currentMethodsClass
+	
+	| name |
+	name _ palette contents submorphs last contents.
+	(name endsWith: ' class') ifTrue: [
+		name _ (name reversed copyFrom: 6 to: name size) reversed.
+		name _ name reject: [:c| c = $ ].
+		^(Smalltalk at: name asSymbol) class ].
+
+	name _ name reject: [:c| c = $ ].
+	^Smalltalk at: name asSymbol! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/6/2009 13:42'!
+editorFrame: aMorph
+	editorFrame _ aMorph! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 21:56'!
+globalVarMenu
+	|menu|
+	menu _ MenuMorph new defaultTarget: self.
+	menu add: 'add a global variable...' action: #createGlobalVar.
+	menu add: 'remove a variable...' action: #removeGlobalVar.
+	^menu! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 19:50'!
+handlesMouseDown: evt
+	"Return true if this morph wants to receive mouseDown events (i.e., mouseDown:, mouseMove:, mouseUp:). The default response is false; subclasses that implement mouse messages should override this to return true." 
+
+	^ true! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/7/2009 20:42'!
+initialize
+	super initialize.
+	currentClass _ Object.
+	self extent: 180 @ 400.
+	self buildPanes.
+	self arrangePanes.
+	self refresh! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 21:26'!
+instanceVarMenu
+	|menu|
+	menu _ MenuMorph new defaultTarget: self.
+	menu add: 'add an instance variable...' action: #createInstVar.
+	menu add: 'remove a variable...' action: #removeInstVar.
+	^menu! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 20:45'!
+invokeContextMenu
+	|m |
+	m _ self contextMenu.
+	m ifNotNil: [m popUpNearHand]! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 22:13'!
+methodMenu
+	|menu|
+	menu _ MenuMorph new defaultTarget: self.
+	menu add: 'remove a method...' action: #removeMethod.
+	^menu! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 19:51'!
+mouseDown: evt
+	"Handle a mouse down event."
+
+	evt rightButtonPressed
+		ifTrue: [ ^self invokeContextMenu].
+! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 02:02'!
+refresh
+	| choice |
+	choice _ header choice.
+	(#basics = choice) ifTrue: [
+		palette contents: ElementPaletteMorph basics ].
+
+	(#allClasses = choice) ifTrue: [
+		palette contents: ElementPaletteMorph classes ].
+
+	(#currentPackageClasses = choice) ifTrue: [
+		(currentClass isKindOf: Metaclass)
+			ifTrue: [ palette contents: (ElementPaletteMorph currentPackageClasses: currentClass allInstances first) ]
+			ifFalse: [palette contents: (ElementPaletteMorph currentPackageClasses: currentClass) ]].
+
+
+	(#variables = choice) ifTrue: [
+		(currentClass isKindOf: Metaclass)
+			ifTrue: [ palette contents: (ElementPaletteMorph classVarsFor: currentClass allInstances first) ]
+			ifFalse: [palette contents: (ElementPaletteMorph instVarsFor: currentClass) ]].
+
+	(#instanceVars = choice) ifTrue: [
+		(currentClass isKindOf: Metaclass)
+			ifTrue: [palette contents: (ElementPaletteMorph instVarsFor: currentClass allInstances first) ]
+			ifFalse: [palette contents: (ElementPaletteMorph instVarsFor: currentClass) ]].
+
+	(#classVars = choice) ifTrue: [
+		(currentClass isKindOf: Metaclass)
+			ifTrue: [palette contents: (ElementPaletteMorph classVarsFor: currentClass allInstances first) ]
+			ifFalse: [palette contents: (ElementPaletteMorph classVarsFor: currentClass) ]].
+
+	(#globalVars = choice) ifTrue: [
+		palette contents: (ElementPaletteMorph globals) ].
+
+
+
+	(#currentMessages = choice) ifTrue: [
+		palette contents: (ElementPaletteMorph messagesFor: currentClass) ].
+
+	(#methodsClass = choice) ifTrue: [
+		palette contents: (ElementPaletteMorph messagesFor: header methodsClass) ].! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 21:21'!
+removeClass
+	| class |
+	class _ self selectClass.
+	class ifNotNil: [
+		class _ Smalltalk at: class.
+		self removeClass: class ]! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 21:22'!
+removeClass: aClass
+
+		(editorFrame currentClass = aClass)
+			ifTrue: [editorFrame selectClass: Object ].
+		aClass removeFromSystem.
+		self refresh ! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 21:43'!
+removeClassVar
+	| var |
+	var _ self selectClassVar.
+	var ifNotNil: [
+		self currentClass removeClassVarName: var.
+		self refresh ]! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 22:02'!
+removeGlobalVar
+	| var |
+	var _ self selectGlobalVar.
+	var ifNotNil: [
+		Smalltalk removeKey: var.
+		self refresh ]! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 21:35'!
+removeInstVar
+	| var |
+	var _ self selectInstVar.
+	var ifNotNil: [
+		self currentClass removeInstVarName: var.
+		self refresh ]! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 22:15'!
+removeMethod
+	| sel |
+	sel _ self selectSelector.
+	sel ifNotNil: [
+		self currentClass removeSelector: sel.
+		self refresh ]! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 21:07'!
+selectClass
+	^(CustomMenu selections: Smalltalk classNames) startUp
+! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 21:44'!
+selectClassVar
+	^(CustomMenu selections: currentClass classVarNames asSortedCollection) startUp
+! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 22:03'!
+selectGlobalVar
+	^(CustomMenu selections: (Smalltalk keys reject: [:key| Smalltalk classNames includes: key]) asSortedCollection) startUp
+! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 21:34'!
+selectInstVar
+	^(CustomMenu selections: currentClass instVarNames) startUp
+! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 22:16'!
+selectSelector
+	^(CustomMenu selections: currentClass selectors asSortedCollection) startUp
+! !
+
+!ElementsPaletteFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 20:29'!
+wantsDroppedMorph: aMorph event: evt
+	"Return true if the receiver wishes to accept the given morph, which is being dropped by a hand in response to the given event. The default implementation returns false.
+NOTE: the event is assumed to be in global (world) coordinates."
+
+	^aMorph isKindOf: SyntaxElementMorph! !
+
+
+!ElementsScrollFrameMorph methodsFor: 'initialization' stamp: 'jens 2/4/2009 20:53'!
+initialize
+
+	super initialize.
+	self color: Color red.
+	hbarInset _ 12.
+	vbarInset _ 12.
+	contentsChanged _ false.
+	growthFraction _ 0.6.  "amount to grow when contents do not fit as a fraction of the current size"
+
+	contents _ PasteUpMorph new
+		color: Color red;
+		borderWidth: 0;
+		enableDragNDrop: true.
+
+	hScrollbar _ ScrollBar new
+		model: self;
+		setValueSelector: #hScrollRelative:;
+		hasMenuButton: false.
+	vScrollbar _ ScrollBar new
+		model: self;
+		setValueSelector: #vScrollRelative:;
+		hasMenuButton: false.
+
+	cornerMorph _ BorderedMorph new
+		borderRaised; borderWidth: 1; color: hScrollbar color.
+
+	contents position: self position + borderWidth.
+	self addMorph: contents.
+	self addMorph: hScrollbar.
+	self addMorph: vScrollbar.
+	self addMorph: cornerMorph.
+	self extent: 160@120.
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'accessing' stamp: 'jens 2/4/2009 20:28'!
+contents
+	"Answer my contents morph."
+
+	^ contents
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'accessing' stamp: 'jens 2/4/2009 20:28'!
+contents: aMorph
+	"Replace my contents morph. The argument can be any morph. Typically it is a BorderedMorph or a PasteUpMorph."
+
+	contents ifNotNil: [contents delete].
+	contents _ aMorph.
+	contents position: self topLeft + borderWidth.
+	self addMorphBack: contents.
+	self extent: self extent.
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'accessing' stamp: 'jens 2/4/2009 20:28'!
+growthFraction: aNumber
+	"Set the amount to grow when contents do not fit, expressed as a fraction of the current size. For example, 0.5 makes the contains pane 50% larger if any submorph extends over the edge."
+
+	growthFraction _ aNumber max: 0.0.
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'accessing' stamp: 'jens 2/4/2009 20:28'!
+hBarInset: anInteger
+
+	hbarInset _ anInteger.
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'accessing' stamp: 'jens 2/4/2009 20:28'!
+vBarInset: anInteger
+
+	vbarInset _ anInteger.
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'scrolling' stamp: 'jens 2/4/2009 20:28'!
+hScrollPixels
+	"Answer the current horizontal scroll offset in pixels."
+
+	^ (self left + borderWidth) - contents left
+
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'scrolling' stamp: 'jens 2/4/2009 20:28'!
+hScrollPixels: hOffset
+	"Scroll to the given horizontal offset in pixels. Zero is scrolled to the left and increasing values scroll right."
+
+	| delta maxOffset |
+	delta _ (hOffset asInteger min: self maxScroll x) max: 0.
+	contents left: ((self left + borderWidth) - delta) truncated.
+
+	maxOffset _ self maxScroll x.
+	maxOffset > 0 ifTrue: [hScrollbar value: self hScrollPixels / maxOffset].
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'scrolling' stamp: 'jens 2/4/2009 20:28'!
+hScrollRelative: aFloat
+	"Sent by the horizontal scrollbar. Scroll to the given relative postion between 0.0 and 1.0."
+
+	self hScrollPixels: aFloat * self maxScroll x.
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'scrolling' stamp: 'jens 2/4/2009 20:28'!
+maxScroll
+	"Answer a point representing the maximum horizontal and vertical scroll offsets in pixels."
+
+	^ contents extent - self visibleExtent
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'scrolling' stamp: 'jens 2/4/2009 20:28'!
+scrollSubmorphIntoView: aMorph
+
+	| offset |
+	(contents submorphs includes: aMorph) ifFalse: [^ self].
+	(self bounds containsRect: aMorph fullBounds) ifTrue: [^ self].
+
+	(aMorph fullBounds bottom > self bottom) ifTrue: [
+		offset _ aMorph fullBounds bottom - contents top.
+		contents top: (self bottom - 3) - offset].
+
+	(aMorph fullBounds top < self top) ifTrue: [
+		offset _ aMorph fullBounds top - contents top.
+		contents top: (self top + 3) - offset].
+
+	self updateScrollbars.
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'scrolling' stamp: 'jens 2/4/2009 20:28'!
+vScrollPixels
+	"Answer the current vertical scroll offset in pixels."
+
+	^ (self top + borderWidth) - contents top
+
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'scrolling' stamp: 'jens 2/4/2009 20:28'!
+vScrollPixels: vOffset
+	"Scroll to the given vertical offset in pixels. Zero is scrolled to the top and increasing values scroll down."
+
+	| delta maxOffset |
+	delta _ (vOffset asInteger min: self maxScroll y) max: 0.
+	contents top: ((self top + borderWidth) - delta) truncated.
+
+	maxOffset _ self maxScroll y.
+	maxOffset > 0 ifTrue: [vScrollbar value: self vScrollPixels / maxOffset].
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'scrolling' stamp: 'jens 2/4/2009 20:28'!
+vScrollRelative: aFloat
+	"Sent by the vertical scrollbar. Scroll to the given relative postion between 0.0 and 1.0."
+
+	self vScrollPixels: aFloat * self maxScroll y.
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'scrollbar visibility' stamp: 'jens 2/4/2009 20:28'!
+showHorizontalScrollbar: aBoolean
+	"Show or hide my horizontal scrollbar."
+
+	aBoolean
+		ifTrue: [
+			self addMorph: hScrollbar.
+			vScrollbar owner = self ifTrue: [self addMorph: cornerMorph]]
+		ifFalse: [
+			hScrollbar delete.
+			cornerMorph delete].
+
+	super extent: self extent.
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'scrollbar visibility' stamp: 'jens 2/4/2009 20:28'!
+showVerticalScrollbar: aBoolean
+	"Show or hide my vertical scrollbar."
+
+	aBoolean
+		ifTrue: [
+			self addMorph: vScrollbar.
+			hScrollbar owner = self ifTrue: [self addMorph: cornerMorph]]
+		ifFalse: [
+			vScrollbar delete.
+			cornerMorph delete].
+
+	super extent: self extent.
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'drawing' stamp: 'jens 2/4/2009 20:28'!
+drawSubmorphsOn: aCanvas
+	"If my contents has changed, fix it's extent and update my scrollbar ranges. Clip submorph drawing to my bounds."
+
+	contentsChanged ifTrue: [
+		self updateContentsExtent.
+		self updateScrollbars.
+		contentsChanged _ false].
+
+	super drawSubmorphsOn: (aCanvas copyClipRect: self innerBounds).
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'layout' stamp: 'jens 2/4/2009 20:28'!
+hResizing
+
+	^ #spaceFill
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'layout' stamp: 'jens 2/4/2009 20:28'!
+isAlignmentMorph
+	"Answer true, since I can be laid out as if I were an AlignmentMorph. I pretend to be an AlignmentMorph so that I can be resized when I'm inside another AlignmentMorph."
+
+	^ true
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'layout' stamp: 'jens 2/4/2009 20:28'!
+layoutInWidth: w height: h
+	"Resize myself to the given width and height. Called during when I am in an AlignmentMorph."
+
+	self extent: w@h.
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'layout' stamp: 'jens 2/4/2009 20:28'!
+minHeight
+
+	^ 45
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'layout' stamp: 'jens 2/4/2009 20:28'!
+minWidth
+
+	^ 60
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'layout' stamp: 'jens 2/4/2009 20:28'!
+vResizing
+
+	^ #spaceFill
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'geometry' stamp: 'jens 2/4/2009 20:28'!
+extent: aPoint
+	"After setting my size, position and size my scrollbars and grow box. Also update my contents and scrollbar ranges."
+
+	| inner w h |
+	super extent: (aPoint truncated max: self minWidth@self minHeight).
+	inner _ self innerBounds.
+
+	w _ inner width.
+	vScrollbar owner = self ifTrue: [w _ w - vbarInset].
+	hScrollbar position: inner left@(inner bottom - hbarInset).
+	hScrollbar extent: w@hbarInset.
+
+	h _ inner height.
+	hScrollbar owner = self ifTrue: [h _ h - hbarInset].
+	vScrollbar position: (inner right - vbarInset)@inner top.
+	vScrollbar extent: vbarInset@h.
+
+	cornerMorph position: (inner bottomRight - (vbarInset@hbarInset)).
+	cornerMorph extent: vbarInset@hbarInset.
+
+	self updateContentsExtent.
+	self updateScrollbars.
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'geometry' stamp: 'jens 2/4/2009 20:28'!
+fullBounds
+	"Overridden to clip submorph hit detection to my bounds."
+
+	^ bounds
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'geometry' stamp: 'jens 2/4/2009 20:28'!
+invalidRect: damageRect
+	"Clip damage reports to my bounds, since drawing is clipped to my bounds."
+
+	| r |
+	r _ damageRect intersect: self bounds.
+	(r width > 0 and: [r height > 0]) ifTrue: [super invalidRect: r].
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'geometry' stamp: 'jens 2/4/2009 20:28'!
+layoutChanged
+	"If my contents morph's layout has changed, record that fact."
+
+	super layoutChanged.
+	contents mayNeedLayout ifTrue: [contentsChanged _ true].
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'private' stamp: 'jens 2/4/2009 20:28'!
+contentsBounds
+	"Answer a rectangle that encloses the bounds of all my submorphs."
+
+	| offset r |
+	offset _ contents topLeft negated.
+	r _ 0@0 extent: 1@1.
+	contents submorphsDo: [:m |
+		r _ r quickMerge: (m fullBounds translateBy: offset) truncated].
+	^ r
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'private' stamp: 'jens 2/5/2009 01:28'!
+updateContentsExtent
+	"Make sure my content morph is large enough to both enclose all it's submorphs and to fill me. Adjust the scroll offsets if my bounds have shrunk."
+
+	| r delta scrolledOff w h visible |
+	r _ self contentsBounds.
+	((r left < 0) or: [r top < 0]) ifTrue: [
+		"contents has morphs that stick out over its top or left edge"
+		delta _ (r topLeft truncated min: (0@0)) negated.
+		contents submorphsDo: [:m | m position: m position + delta]].  "move all submorphs by delta"
+
+	visible _ self visibleExtent - (8@20).
+	w _ visible x. r width > w ifTrue: [w _ (r width + (growthFraction * visible x)) rounded].
+	h _ visible y. r height > h ifTrue: [h _ (r height + (growthFraction * visible y))  rounded].
+
+	scrolledOff _ ((self topLeft + borderWidth) - contents position) max: 0@0.
+	contents extent: ((w@h) max: (self visibleExtent + scrolledOff)).
+	contentsChanged _ false.
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'private' stamp: 'jens 2/4/2009 20:28'!
+updateScrollbars
+	"Update my scrollbars based on my current contents."
+
+	| visibleExtent currentScroll maxScroll |
+	contents ifNil: [^ self].  "not fully initialized yet"
+	visibleExtent _ self visibleExtent.
+	hScrollbar percentVisible: (visibleExtent x asFloat / contents width).
+	vScrollbar percentVisible: (visibleExtent y asFloat / contents height).
+
+	currentScroll _ (self topLeft + borderWidth) - contents position.
+	contents width > visibleExtent x
+		ifTrue: [
+			maxScroll _ contents width - visibleExtent x.
+			self showHorizontalScrollbar: true.
+			hScrollbar
+				scrollDelta: 4 / maxScroll asFloat 
+				pageDelta: (visibleExtent x - 40) / maxScroll asFloat.
+			hScrollbar value: currentScroll x / maxScroll]
+		ifFalse: [
+			self showHorizontalScrollbar: false.
+			hScrollbar value: 0].
+
+	contents height > visibleExtent y
+		ifTrue: [
+			maxScroll _ contents height - visibleExtent y.
+			self showVerticalScrollbar: true.
+			vScrollbar
+				scrollDelta: 4.0 / maxScroll asFloat 
+				pageDelta: (visibleExtent y - 40) / maxScroll asFloat.
+			vScrollbar value: currentScroll y / maxScroll]
+		ifFalse: [
+			self showVerticalScrollbar: false.
+			vScrollbar value: 0].
+! !
+
+!ElementsScrollFrameMorph methodsFor: 'private' stamp: 'jens 2/4/2009 20:28'!
+visibleExtent
+	"Answer the extent of my visible area. That is, the area within my borders minus the space used for scrollbars."
+
+	| clipToScrollBarEdge visibleW visibleH |
+	clipToScrollBarEdge _ false.
+	clipToScrollBarEdge ifFalse: [^ self extent - (2 * borderWidth)].
+
+	visibleW _ self width - (2 * borderWidth).
+	vScrollbar owner = self ifTrue: [visibleW _ visibleW - vbarInset].
+	visibleH _ self height - (2 * borderWidth).
+	hScrollbar owner = self ifTrue: [visibleH _ visibleH - hbarInset].
+	^ visibleW@visibleH
+! !
+
+
+!ElementsToggleButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 02:50'!
+drawOn: aCanvas 
+
+	|r bw |
+	bw _ self borderWidth.
+
+	"border"
+	"top"
+	r _ Rectangle origin: ((self left + bw) @ self top) corner: (self right @ (self top + bw)).
+	aCanvas fillRectangle: r color: self borderColorVeryLight.
+
+	"left"
+	r _ Rectangle origin: (self topLeft) corner: (self left + bw) @ (self bottom - bw).
+	aCanvas fillRectangle: r color: self borderColorLight.
+
+	"right"
+	r _ Rectangle origin: ((self right - bw) @ (self top + bw)) corner: self bottomRight.
+	aCanvas fillRectangle: r color: self borderColorDark.
+
+	"bottom"
+	r _ Rectangle origin: (self left @ (self bottom - bw)) corner: (self right - bw) @ self bottom.
+	aCanvas fillRectangle: r color: self borderColorVeryDark.
+
+	"body"
+	aCanvas fillRectangle: (Rectangle origin: (self topLeft + bw) corner: (self bottomRight - bw)) color: color.
+"
+	aCanvas fillRectangle: (Rectangle origin: (self topLeft + bw) corner: (self right - bw) @ (self center y - bw)) color: color twiceLighter.
+
+	aCanvas fillRectangle: (Rectangle origin: (self left + bw) @ (self center y - bw) corner: (self right - bw) @ (self center y)) color: color lighter.
+
+	aCanvas fillRectangle: (Rectangle origin: (self left + bw @ (self center y)) corner: (self bottomRight - bw)) color: color.
+
+"
+
+specialEffect ifTrue: [
+
+	aCanvas fillRectangle: (Rectangle origin: (self topLeft + bw) corner: (self left + self height) @ (self center y - bw)) color: onColor twiceLighter.
+
+	aCanvas fillRectangle: (Rectangle origin: (self left + bw) @ (self center y - bw) corner: (self left + self height) @ (self center y)) color: onColor lighter.
+
+	aCanvas fillRectangle: (Rectangle origin: (self left + bw @ (self center y)) corner: (self left + self height) @ (self bottom - bw)) color: onColor
+
+
+]! !
+
+!ElementsToggleButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/4/2009 03:42'!
+fitMorphs
+	| bw x y |
+	bw _ self borderWidth.
+	self height: label height + (bw * 2).
+	x _ self left + ((self width - label width) // 2).
+	y _ self top + bw.
+	label position: x@ y ! !
+
+!ElementsToggleButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 02:49'!
+flat
+	specialEffect _ false! !
+
+!ElementsToggleButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 02:49'!
+initialize
+	super initialize.
+	specialEffect _ true.
+	on _ true.
+	target _ self.
+	selector _ #toggle.
+	onColor _ Color blue.
+	offColor _ Color gray.
+	self label: 'Elements Toggle Button'.
+	self toggle! !
+
+!ElementsToggleButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 23:54'!
+isOn
+	^on! !
+
+!ElementsToggleButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/4/2009 00:03'!
+label: aString
+
+	label ifNil: [
+		label _ StringMorph contents: '' font: self labelFont.
+		label color: self labelColor.
+		self addMorphFront: label ].
+	label contents: aString.
+	self fitMorphs
+! !
+
+!ElementsToggleButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 23:47'!
+labelFont
+	^StrikeFont fontName: 'VerdanaBold' size: 10! !
+
+!ElementsToggleButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 23:54'!
+off
+	on _ false.
+	self color: offColor! !
+
+!ElementsToggleButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 23:54'!
+on
+	on _ true.
+	self color: onColor! !
+
+!ElementsToggleButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/4/2009 01:24'!
+onColor: onc offColor: offc
+	onColor _ onc.
+	offColor _ offc! !
+
+!ElementsToggleButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/4/2009 00:07'!
+toggle
+	self fitMorphs.
+	on ifTrue: [^self off].
+	self on! !
+
+
+!ElementsDoubleToggleMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/7/2009 21:28'!
+chooser: aSelector
+	chooser selector: aSelector! !
+
+!ElementsDoubleToggleMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/4/2009 00:38'!
+fitMorphs
+	| bw x y |
+	chooser ifNil: [^super fitMorphs].
+	bw _ self borderWidth.
+	self height: label height + (bw * 2).
+	y _ self top + bw.
+
+	chooser extent: (label height @ label height) * 2//3.
+	chooser position: self left + bw @ self top + (label height - chooser height // 2).
+
+	x _ chooser right + bw + (self width - label width // 2).
+
+	label position: x@ y.
+! !
+
+!ElementsDoubleToggleMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/4/2009 00:43'!
+initialize
+	super initialize.
+	chooser _ TriangleButtonMorph new
+				target: self;
+				selector: #test.
+	self addMorph: chooser.
+	self fitMorphs! !
+
+!ElementsDoubleToggleMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/4/2009 00:30'!
+selector: anObject
+	super selector: anObject.
+	chooser selector: anObject! !
+
+!ElementsDoubleToggleMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/4/2009 00:30'!
+target: anObject
+	super target: anObject.
+	chooser target: anObject! !
+
+!ElementsDoubleToggleMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/4/2009 00:31'!
+test
+	self inform: 'Hi'! !
+
+
+!HandMorph methodsFor: 'world menu' stamp: 'jens 2/13/2009 11:46'!
+openMenu
+	"Build the open window menu for the world."
+
+	| menu |
+	menu _ (MenuMorph entitled: 'open...') defaultTarget: self.
+	menu addStayUpItem.
+	menu add: 'browser' action: #openBrowser.
+	menu add: 'workspace' action: #openWorkspace.
+	menu add: 'file list' action: #openFileList.
+	menu add: 'transcript' action: #openTranscript.
+	menu addLine.
+	menu add: 'simple change sorter' selector: #openChangeSorter: argument: 1.
+	menu add: 'dual change sorter' selector: #openChangeSorter: argument: 2.
+	menu addLine.
+	menu add: 'mvc project' action: #openMVCProject.
+	menu add: 'morphic project' action: #openMorphicProject.
+	menu addLine.
+	menu add: 'Elements' action: #openElementsBrowser.
+	^ menu
+! !
+
+!HandMorph methodsFor: 'world menu commands' stamp: 'jens 2/10/2009 01:06'!
+openElementsBrowser
+
+	| m |
+	m _ ElementsMethodEditorMorph new.
+	m openInWorld.
+! !
+
+
+!InstanceClassSwitchMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 00:11'!
+arrangePanes
+
+	| toggleWidth |
+	toggleWidth _ self width - 6 // 2.
+
+	instance 
+		width: toggleWidth;
+		position: self topLeft + 2;
+		fitMorphs.
+
+	class 
+		width: toggleWidth;
+		position: instance right + 2 @ (instance top);
+		fitMorphs.
+
+	self height: class bottom + 2 - self top! !
+
+!InstanceClassSwitchMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 00:17'!
+buildPanes
+
+	instance _ ElementsToggleButtonMorph new
+				target: self;
+				selector: #instance;
+				label: 'instance';
+				onColor: Color blue darker offColor: color.
+
+	class _ ElementsToggleButtonMorph new
+				target: self;
+				selector: #class;
+				label: 'class';
+				onColor: Color magenta twiceDarker offColor: color.
+
+	self
+		addMorph: instance;
+		addMorph: class
+! !
+
+!InstanceClassSwitchMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 00:12'!
+choice
+	^choice! !
+
+!InstanceClassSwitchMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 23:28'!
+class
+	(choice = #class) ifTrue: [^self].
+	choice _ #class.
+	frame ifNotNil: [
+		frame switchToClassSide.
+		self refresh ]! !
+
+!InstanceClassSwitchMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 23:19'!
+frame: aMorph
+	frame _ aMorph! !
+
+!InstanceClassSwitchMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 00:07'!
+initialize
+	super initialize.
+	choice _ #instance.
+	color _ Color gray.
+	self width: 180.
+	self buildPanes.
+	self arrangePanes.
+	self refresh! !
+
+!InstanceClassSwitchMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 23:29'!
+instance
+	(choice = #instance) ifTrue: [^self].
+	choice _ #instance.
+	frame ifNotNil: [
+		frame switchToInstanceSide.
+		self refresh ]! !
+
+!InstanceClassSwitchMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 00:13'!
+refresh
+
+	instance off.
+	class off.
+
+	(#instance = choice) ifTrue: [
+		instance on ].
+	(#class = choice) ifTrue: [
+		class on ].
+
+! !
+
+
+!MethodChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 13:05'!
+addCategory
+	| ans |
+	ans _ FillInTheBlank request: 'new category:' initialAnswer: ''.
+	(ans size > 0) ifFalse: [^self].
+	class organization addCategory: ans! !
+
+!MethodChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 13:11'!
+chooseMethod
+
+	|menu list|
+	menu _ MenuMorph new.
+	menu defaultTarget: self.
+	selector ifNotNil: [
+		menu add: 'put method into category...' action: #reclassify.
+		menu add: 'add category...' action: #addCategory.
+		menu add: 'remove empty categories' action: #removeEmptyCategories.
+		menu addLine ].
+	list _ class organization categories asSortedCollection.
+	list do: [:each|
+		menu add: each asString subMenu: (self menuForCategory: each)].
+	menu popUpAt: button center x @ (self bottom + 5) forHand: World activeHand! !
+
+!MethodChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 23:14'!
+class: aClass
+	class _ aClass. ! !
+
+!MethodChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/4/2009 23:44'!
+initialize
+	super initialize.
+	class _ Object.
+	selector _ #yourself.
+	button selector: #chooseMethod
+	! !
+
+!MethodChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 01:17'!
+menuForCategory: categoryName
+
+	|menu list |
+	menu _ MenuMorph new
+				defaultTarget: self.
+	list _ class organization listAtCategoryNamed: categoryName.
+	list isEmpty ifTrue: [
+		menu add: 'yourself' selector: #selector: argument: #yourself.
+		^menu ].
+	list asSortedCollection do: [:each|
+		menu add: (self wordsFrom: each asString) selector: #selector: argument: each].
+	^menu
+! !
+
+!MethodChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 01:35'!
+mouseDown: evt
+	self chooseMethod! !
+
+!MethodChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 12:57'!
+reclassify
+	class organization letUserReclassify: selector! !
+
+!MethodChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 13:09'!
+removeEmptyCategories
+
+	class organization removeEmptyCategories! !
+
+!MethodChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/4/2009 23:23'!
+selector
+	^selector! !
+
+!MethodChooserMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 22:17'!
+selector: aSelector
+
+	selector _ aSelector.
+	label ifNil: [
+		label _ StringMorph contents: '' font: self labelFont.
+		label color: self labelColor.
+		self addMorphFront: label ].
+	aSelector isNil
+		ifTrue: [ label contents: '' ]
+		ifFalse: [ label contents: (self wordsFrom: selector asString)].
+	self fitMorphs.
+
+	frame ifNotNil: [frame selectMethod: aSelector]
+! !
+
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/7/2009 22:10'!
+adjustToClass: aClass
+	(aClass isKindOf: Metaclass)
+		ifTrue: [
+			(#instanceVars = choice)
+				ifTrue: [choice _ #variables]]! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 00:25'!
+allClasses
+	choice _ #allClasses.
+	self refresh! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/7/2009 20:29'!
+arrangePanes
+
+	| toggleWidth |
+	toggleWidth _ self width - 6 // 2.
+
+	basics 
+		width: toggleWidth;
+		position: self topLeft + 2;
+		fitMorphs.
+
+	messages 
+		width: toggleWidth;
+		position: basics left @ (basics bottom + 2);
+		fitMorphs.
+
+	variables 
+		width: toggleWidth;
+		position: (basics right + 2) @ (basics top);
+		fitMorphs.
+
+	classes 
+		width: toggleWidth;
+		position: (basics right + 2) @ (variables bottom + 2);
+		fitMorphs.
+
+	self height: messages bottom + 2 - self top! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/4/2009 03:16'!
+basics
+	choice _ #basics.
+	self refresh! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 01:44'!
+buildPanes
+
+	basics _ ElementsToggleButtonMorph new
+				target: self;
+				selector: #basics;
+				label: 'Basics';
+				onColor: Color green twiceDarker darker offColor: color.
+
+	variables _ ElementsDoubleToggleMorph new
+				target: self;
+				selector: #variables;
+				chooser: #varMenu;
+				label: 'Variables';
+				onColor: Color blue darker offColor: color.
+
+	classes _ ElementsDoubleToggleMorph new
+				target: self;
+				selector: #classes;
+				chooser: #classMenu;
+				label: 'Classes';
+				onColor: Color magenta darker darker darker offColor: color.
+
+	messages _ ElementsDoubleToggleMorph new
+				target: self;
+				selector: #messages;
+				chooser: #chooseClassForMethods;
+				label: 'Messages';
+				onColor: Color orange darker darker offColor: color.
+
+	self
+		addMorph: basics;
+		addMorph: variables;
+		addMorph: classes;
+		addMorph: messages
+! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/4/2009 03:24'!
+choice
+	^choice! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 12:49'!
+chooseClassForMethods
+
+	| menu packages pkg pkgMenu catMenu superc subc smenu currentClass |
+
+	self messages.	
+
+	packages _ Dictionary new.
+	SystemOrganization categories asSortedCollection do: [:cat |
+		pkg _ (cat asString findTokens: #( $- )) first.
+		(packages includesKey: pkg)
+			ifFalse: [ packages at: pkg put: OrderedCollection new].
+		(packages at: pkg) add: cat].
+
+	currentClass _ self currentMethodsClass.
+
+	superc _ currentClass allSuperclasses.
+	subc _ currentClass allSubclasses.
+
+	menu _ MenuMorph new.
+
+	menu defaultTarget: self.
+	menu add: 'current class' action: #currentMessages.
+
+	currentClass isMeta
+		ifTrue: [ menu add: 'instance side' selector: #setMethodsClass: argument: currentClass theNonMetaClass]
+		ifFalse: [ menu add: 'class side' selector: #setMethodsClass: argument: currentClass class].
+
+	superc isEmpty ifFalse: [
+		smenu _ MenuMorph new defaultTarget: self.
+		superc do: [:eachClass |
+			smenu add: eachClass printString selector: #setMethodsClass: argument: eachClass ].
+		menu add: 'superclasses' subMenu: smenu ].
+
+	subc isEmpty ifFalse: [
+		smenu _ MenuMorph new defaultTarget: self.
+		subc do: [:eachClass |
+			smenu add: eachClass printString selector: #setMethodsClass: argument: eachClass ].
+		menu add: 'subclasses' subMenu: smenu].
+
+	menu addLine.
+
+	packages keys asSortedCollection do: [:eachPkg |
+		pkgMenu _ MenuMorph new.
+		(packages at: eachPkg) asSortedCollection do: [: cat |
+			catMenu _ self menuForCategory: cat.
+			pkgMenu add: (SyntaxElementMorph wordsFrom: cat asString)
+					subMenu: catMenu ].
+		menu add: eachPkg subMenu: pkgMenu ].
+
+	menu popUpNearHand! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 00:23'!
+classMenu
+	| menu |
+	menu _ MenuMorph new.
+	menu defaultTarget: self.
+	menu defaultTarget: self.
+	menu add: 'in package' action: #currentPackageClasses.
+	menu add: 'all' action: #allClasses.
+	menu popUpNearHand! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/7/2009 21:40'!
+classVars
+	choice _ #classVars.
+	self refresh! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/8/2009 23:38'!
+classes
+	choice _ #currentPackageClasses.
+	self refresh! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 02:04'!
+currentMessages
+	choice _ #currentMessages.
+	lastMsgChoice _ choice.
+	self refresh! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 23:05'!
+currentMethodsClass
+
+	^(self ownerThatIsA: ElementsPaletteFrameMorph) currentMethodsClass.
+	! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 00:25'!
+currentPackageClasses
+	choice _ #currentPackageClasses.
+	self refresh! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/7/2009 21:24'!
+frame: aMorph
+	frame _ aMorph! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/7/2009 21:40'!
+globalVars
+	choice _ #globalVars.
+	self refresh! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 02:12'!
+initialize
+	super initialize.
+	choice _ #basics.
+	lastMsgChoice _ #currentMessages.
+	color _ Color gray.
+	self width: 180.
+	self buildPanes.
+	self arrangePanes.
+	self refresh! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/7/2009 21:39'!
+instanceVars
+	choice _ #instanceVars.
+	self refresh! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 01:52'!
+menuForCategory: categoryName
+
+	|menu list submenu |
+	menu _ MenuMorph new
+				defaultTarget: self.
+	list _ SystemOrganization listAtCategoryNamed: categoryName.
+	list asSortedCollection do: [:eachClass|
+		submenu _ MenuMorph new defaultTarget: self.
+		submenu add: 'instance' selector: #setMethodsClass: argument: (Smalltalk classNamed: eachClass).
+		submenu add: 'class' selector: #setMethodsClass: argument: (Smalltalk classNamed: eachClass) class.
+		menu add: (SyntaxElementMorph wordsFrom: eachClass asString) subMenu: submenu].
+	^menu
+! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 02:05'!
+messages
+	choice _ lastMsgChoice.
+	self refresh! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 01:56'!
+methodsClass
+	^methodsClass! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 14:33'!
+refresh
+	basics off.
+	classes off.
+	messages off.
+	variables off.
+
+	(#basics = choice) ifTrue: [
+		basics on ].
+	(#(allClasses currentPackageClasses) includes: choice) ifTrue: [
+		classes on ].
+	(#(variables instanceVars classVars globalVars) includes: choice) ifTrue: [
+		variables on ].
+	(#(currentMessages methodsClass) includes: choice) ifTrue: [
+		messages on ].
+
+	frame ifNotNil: [frame refresh]! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 02:04'!
+setMethodsClass: aClass
+	choice _ #methodsClass.
+	lastMsgChoice _ choice.
+	methodsClass _ aClass.
+	self refresh	! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/7/2009 21:48'!
+varMenu
+	| menu isClassSide |
+	menu _ MenuMorph new.
+	menu defaultTarget: self.
+	isClassSide _ frame currentClass isKindOf: Metaclass.
+	isClassSide ifFalse: [
+		menu add: 'instance' action: #instanceVars ].
+	menu add: 'class' action: #classVars.
+	menu add: 'globals' action: #globalVars.
+	menu popUpNearHand! !
+
+!PaletteFrameHeadMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/4/2009 03:16'!
+variables
+	choice _ #variables.
+	self refresh! !
+
+
+!ParseNode methodsFor: 'elements' stamp: 'jens 1/19/2009 23:20'!
+asSyntaxElement
+	^ObjectElementMorph new label: 'UndefinedElement'; color: Color black! !
+
+
+!AssignmentNode methodsFor: 'elements' stamp: 'jens 1/28/2009 22:42'!
+asSyntaxElement
+
+	^MessageElementMorph new
+		receiver: variable asSyntaxElement;
+		selector: '_'	arguments: (Array with: value asSyntaxElement)! !
+
+
+!BlockNode methodsFor: 'elements' stamp: 'jens 2/2/2009 19:51'!
+asStackOfSteps
+	| thisStatement step first |
+	first _ nil.
+	1 to: statements size do: 
+		[:i | 
+		thisStatement _ statements at: i.
+		(thisStatement isKindOf: ReturnNode)
+			ifTrue: [
+				thisStatement isReturnSelf ifTrue: [^first].
+				step _ thisStatement asSyntaxElement ]
+			ifFalse: [ step _ StepElementMorph new
+							 expression: thisStatement asSyntaxElement].
+		(i = 1) 
+			ifTrue: [ first _ step]
+			ifFalse: [ first addToLast: step]].
+	^first
+! !
+
+!BlockNode methodsFor: 'elements' stamp: 'jens 1/30/2009 07:15'!
+asSyntaxElement
+	| be thisStatement step first |
+
+	be _ BlockElementMorph new.
+	be addVarNames: (arguments collect: [:arg|
+		arg key ]).
+
+	1 to: statements size do: 
+		[:i | 
+		thisStatement _ statements at: i.
+		(thisStatement isKindOf: ReturnNode)
+			ifTrue: [step _ thisStatement asSyntaxElement]
+			ifFalse: [ step _ StepElementMorph new
+							 expression: thisStatement asSyntaxElement].
+		(i = 1) 
+			ifTrue: [ first _ step]
+			ifFalse: [ first addToLast: step]].
+
+	first ifNotNil: [be addStep: first ].
+	^be
+
+
+! !
+
+
+!CascadeNode methodsFor: 'elements' stamp: 'jens 1/21/2009 22:01'!
+asSyntaxElement
+
+	| me |
+	me _ messages last asSyntaxElement
+		receiver: receiver asSyntaxElement.
+	messages allButLast do: [:msg |
+		me addToCascade: msg asSyntaxElement ].
+
+	^me
+! !
+
+
+!LiteralNode methodsFor: 'elements' stamp: 'jens 1/21/2009 22:13'!
+asSyntaxElement
+	^LiteralElementMorph new
+		contents: key! !
+
+
+!MessageNode methodsFor: 'elements' stamp: 'jens 1/28/2009 21:54'!
+asSyntaxElement
+
+	|me|
+	me _ MessageElementMorph new.
+	receiver ifNotNil: [
+		me receiver: receiver asSyntaxElement ].
+	me 
+		selector: selector key "self selectorForSyntaxElement"
+		arguments: (arguments collect: [:arg| 
+			arg asSyntaxElement ]).
+	^me
+! !
+
+!MessageNode methodsFor: 'elements' stamp: 'jens 1/20/2009 23:24'!
+elementSelectorIf
+
+	(arguments last isJust: NodeNil) ifTrue:
+		[^#ifTrue:].
+	(arguments last isJust: NodeFalse) ifTrue:
+		[^#and].
+	(arguments first isJust: NodeNil) ifTrue:
+		[^#ifFalse:].
+	(arguments first isJust: NodeTrue) ifTrue:
+		[^#or:].
+	^#ifTrue:ifFalse:! !
+
+!MessageNode methodsFor: 'elements' stamp: 'jens 1/20/2009 23:32'!
+elementSelectorIfNilNotNil
+
+	(arguments first isJust: NodeNil) ifTrue:
+		[^ #ifNotNil:].
+	(arguments second isJust: NodeNil) ifTrue:
+		[^ #ifNil:].
+	^ #ifNil:ifNotNil:! !
+
+!MessageNode methodsFor: 'elements' stamp: 'jens 1/20/2009 23:29'!
+elementSelectorToDo
+	(selector key = #to:by:do:
+			and: [(arguments at: 2) isConstantNumber
+				and: [(arguments at: 2) key = 1]])
+		ifTrue: [^#to:do:]
+		ifFalse: [^selector key]! !
+
+!MessageNode methodsFor: 'elements' stamp: 'jens 1/20/2009 23:27'!
+elementSelectorWhile
+	(arguments first isJust: NodeNil) ifTrue:
+			[selector _ SelectorNode new
+					key: (selector key == #whileTrue:
+						ifTrue: [#whileTrue] ifFalse: [#whileFalse])
+					code: #macro].
+
+	^ selector key
+! !
+
+!MessageNode methodsFor: 'elements' stamp: 'jens 1/21/2009 22:36'!
+selectorForSyntaxElement
+
+	| sd printer slctr |
+
+	"these special cases need to be worked on..." 
+"	true ifTrue: [^selector key]."
+	special > 0 ifTrue: [printer _ MacroPrinters at: special].
+
+	sd _ Dictionary new.
+	sd
+		at: #printIfOn:indent: put: #elementSelectorIf;
+		at: #printWhileOn:indent: put: #elementSelectorWhile;
+		at: #printToDoOn:indent: put: #elementSelectorToDo;
+		at: #printIfNilNotNil:indent: put: #elementSelectorIfNilNotNil.
+
+	slctr _ sd at: printer ifAbsent: [ nil ].
+	slctr isNil
+		ifTrue: [^selector key ]
+		ifFalse: [^self perform: slctr ]! !
+
+
+!MethodNode methodsFor: 'elements' stamp: 'jens 2/2/2009 23:18'!
+asSyntaxElement
+	| element pe be |
+	element _ MethodElementMorph new
+		selector: self selector asString 
+		arguments: (arguments collect: [:arg| arg key]).
+
+	temporaries do: [:temp |
+		element addVariableNamed: temp key ].
+
+	primitive > 0 ifTrue:
+			[(primitive between: 255 and: 519) ifFalse: 
+				[pe _ self primitiveElement.
+				element addStep: pe]].
+
+	be _ (block asStackOfSteps).
+	be ifNotNil:[	element addStep: be].
+	^element! !
+
+!MethodNode methodsFor: 'elements' stamp: 'jens 1/19/2009 23:59'!
+primitiveElement
+
+	| s primIndex primDecl |
+	s _ WriteStream on: String new.
+	primIndex _ primitive.
+
+	primIndex = 120 "External call spec"
+		ifTrue:[1 halt. ^s print: encoder literals first].
+	s nextPutAll: 'primitive: '.
+	primIndex = 117 ifTrue:[
+		primDecl _ encoder literals at: 1.
+		s 
+			nextPut: $';
+			nextPutAll: (primDecl at: 2);
+			nextPut:$'.
+		(primDecl at: 1) notNil ifTrue:[
+			s 
+				nextPutAll:' module:';
+				nextPut:$';
+				nextPutAll: (primDecl at: 1);
+				nextPut:$'.
+		].
+	] ifFalse:[s print: primIndex].
+	^PrimitiveElementMorph new contents: s contents! !
+
+
+!ReturnNode methodsFor: 'elements' stamp: 'jens 1/30/2009 00:31'!
+asSyntaxElement
+
+	^ReturnElementMorph new expression: expr asSyntaxElement! !
+
+
+!StringElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 20:49'!
+launchMiniEditor: evt
+
+	| textMorph |
+
+	hasFocus _ true.  "Really only means edit in progress for this morph"
+	textMorph _ StringMorphEditor new contentsAsIs: contents.
+	textMorph color: self color.
+	textMorph beAllFont: self font.
+	textMorph bounds: (self bounds expandBy: 0@2).
+	self addMorphFront: textMorph.
+	evt hand newMouseFocus: textMorph.
+	evt hand newKeyboardFocus: textMorph.
+	textMorph editor selectFrom: 1 to: textMorph paragraph text string size.
+	textMorph mouseDown: evt.
+! !
+
+
+!StringHolder methodsFor: 'elements' stamp: 'jens 2/2/2009 01:02'!
+compareElementsBytecode
+
+	| myClass mySelector myMethod se recompiled |
+
+	(myClass _ self selectedClassOrMetaClass) ifNotNil:
+		[mySelector _ self selectedMessageName. 
+		myMethod _ myClass compiledMethodAt: mySelector ifAbsent: [^self].
+
+
+	se _ ((myClass decompilerClass new)
+		decompile: mySelector in: myClass method: myMethod) asSyntaxElement.
+	se openInWorld;
+		position: World center - (se extent // 2)].
+
+	recompiled _ se asCompiledMethodForClass: myClass.
+	(recompiled = myMethod)
+		ifTrue: [self inform: 'bytecodes match.']
+		ifFalse: [self inform: 'bytecodes do NOT match!!'].
+
+	se delete! !
+
+!StringHolder methodsFor: 'elements' stamp: 'jens 2/2/2009 01:01'!
+openMessageAsSyntaxElement
+
+	| myClass mySelector myMethod temps se |
+
+	(myClass _ self selectedClassOrMetaClass) ifNotNil:
+		[mySelector _ self selectedMessageName. 
+		myMethod _ myClass compiledMethodAt: mySelector ifAbsent: [^self].
+		temps _ (myClass compilerClass new
+						parse: myMethod getSourceFromFile asString in: myClass notifying: nil)
+						tempNames.
+
+	se _ ((myClass decompilerClass new withTempNames: temps)
+		decompile: mySelector in: myClass method: myMethod) asSyntaxElement.
+	se openInWorld;
+		position: World center - (se extent // 2)]! !
+
+
+!Browser methodsFor: 'message functions' stamp: 'jens 1/28/2009 23:38'!
+messageListMenu: aMenu shifted: shifted
+	| aList |
+	aList _ shifted
+		ifFalse: [#(
+			('browse full (b)' 						browseMethodFull)
+			('browse hierarchy (h)'					classHierarchy)
+			('browse method (O)'					openSingleMessageBrowser)
+			-
+			('open as elements'						openMessageAsSyntaxElement)			
+			('check bytecode compatibility'			compareElementsBytecode)			
+			-
+			('fileOut'								fileOutMessage)
+			('printOut'								printOutMessage)
+			-
+			('senders of... (n)'						browseSendersOfMessages)
+			('implementors of... (m)'					browseMessages)
+			('inheritance (i)'						methodHierarchy)
+			('versions (v)'							browseVersions)
+			-
+			('inst var refs...'						browseInstVarRefs)
+			('inst var defs...'						browseInstVarDefs)
+			('class var refs...'						browseClassVarRefs)
+			('class variables'						browseClassVariables)
+			('class refs (N)'							browseClassRefs)
+			-
+			('remove method (x)'					removeMessage)
+			-
+			('more...'								shiftedYellowButtonActivity))]
+		ifTrue: [#(
+			('toggle diffing'							toggleDiffing)
+			('implementors of sent messages'			browseAllMessages)
+			-
+			('inspect instances'						inspectInstances)
+			('inspect subinstances'					inspectSubInstances)
+			-
+			('remove from this browser'				removeMessageFromBrowser)
+			('change category...'					changeCategory)
+			-
+			('change sets with this method'			findMethodInChangeSets)
+			('revert to previous version'				revertToPreviousVersion)
+			('remove from current change set'		removeFromCurrentChanges)
+			('revert and forget'						revertAndForget)
+			-
+			('more...' 								unshiftedYellowButtonActivity))].
+	^ aMenu addList: aList
+! !
+
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/15/2009 23:29'!
+aboutToBeGrabbedBy: aHand
+
+	(owner isKindOf: ArgumentElementMorph)
+		ifTrue: [owner removeContents. ^self ].
+	(owner isKindOf: StepElementMorph)
+		ifTrue: [owner removeNext. ^self].
+	(owner isKindOf: MessageElementMorph)
+		ifTrue: [owner removeCascadedElement: self. ^self].
+	^ self
+
+
+! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/22/2009 23:36'!
+asSmalltalk
+	^''! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: ' jens 1/8/2009 11:27'!
+borderColorDark
+	^color twiceDarker! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: ' jens 1/8/2009 12:02'!
+borderColorLight
+	^color twiceLighter lighter! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: ' jens 1/8/2009 11:57'!
+borderColorVeryDark
+	^color twiceDarker darker! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: ' jens 1/8/2009 12:02'!
+borderColorVeryLight
+	^color twiceLighter twiceLighter lighter! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 21:40'!
+borderWidth
+	^1
+! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: ' jens 1/8/2009 12:58'!
+changed
+	super changed! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 23:06'!
+contextMenu
+
+	^nil! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 19:45'!
+drawOn: aCanvas 
+
+	|r bw |
+	bw _ self borderWidth.
+
+	"border"
+	"top"
+	r _ Rectangle origin: ((self left + bw) @ self top) corner: (self right @ (self top + bw)).
+	aCanvas fillRectangle: r color: self borderColorVeryLight.
+
+	"left"
+	r _ Rectangle origin: (self topLeft) corner: (self left + bw) @ (self bottom - bw).
+	aCanvas fillRectangle: r color: self borderColorLight.
+
+	"right"
+	r _ Rectangle origin: ((self right - bw) @ (self top + bw)) corner: self bottomRight.
+	aCanvas fillRectangle: r color: self borderColorDark.
+
+	"bottom"
+	r _ Rectangle origin: (self left @ (self bottom - bw)) corner: (self right - bw) @ self bottom.
+	aCanvas fillRectangle: r color: self borderColorVeryDark.
+
+	"body"
+"	aCanvas fillRectangle: (Rectangle origin: (self topLeft + bw) corner: (self bottomRight - bw)) color: color"
+
+	aCanvas fillRectangle: (Rectangle origin: (self topLeft + bw) corner: (self right - bw) @ (self center y - bw)) color: color twiceLighter.
+
+	aCanvas fillRectangle: (Rectangle origin: (self left + bw) @ (self center y - bw) corner: (self right - bw) @ (self center y)) color: color lighter.
+
+	aCanvas fillRectangle: (Rectangle origin: (self left + bw @ (self center y)) corner: (self bottomRight - bw)) color: color
+
+! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/13/2009 12:41'!
+evaluate
+	^Compiler evaluate: self asSmalltalk! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/11/2009 22:07'!
+fit
+	self extent: label extent + (self borderWidth * 2).
+	self width: (self width + (self labelFont widthOf: $ )).
+	label position: bounds center - (label extent // 2).
+	(owner respondsTo: #fit)
+		ifTrue: [owner fit]
+! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 22:56'!
+handlesMouseDown: evt
+	"Return true if this morph wants to receive mouseDown events (i.e., mouseDown:, mouseMove:, mouseUp:). The default response is false; subclasses that implement mouse messages should override this to return true." 
+
+	^ true! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: ' jens 1/8/2009 12:36'!
+initialize
+	super initialize.
+	color _ Color red! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 23:18'!
+invokeContextMenu
+	|m choice|
+	m _ self contextMenu.
+	m ifNotNil: [
+		choice _ m startUp.
+		choice ifNotNil: [self perform: choice] ]! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 00:43'!
+isRenameable
+	| editor |
+	editor _ (self ownerThatIsA: ElementsMethodEditorMorph).
+	^editor isNil
+	! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/22/2009 20:46'!
+label
+	^name
+	"^label contents"! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/22/2009 23:47'!
+label: aString
+
+	name _ aString.
+	label ifNil: [
+		label _ StringMorph contents: '' font: self labelFont.
+		label color: self labelColor.
+		self addMorphFront: label].
+	label contents: (self wordsFrom: name).
+	self fit
+! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: ' jens 1/8/2009 12:36'!
+labelColor
+	^Color white! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 21:39'!
+labelFont
+	^StrikeFont fontName: 'Verdana' size: 10! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 23:02'!
+mouseDown: evt
+	"Handle a mouse down event."
+
+	evt rightButtonPressed
+		ifTrue: [ ^self invokeContextMenu].
+	self startDrag: evt
+! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 21:29'!
+name
+	^name! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/28/2009 00:50'!
+representsNil
+	^false! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: ' jens 1/8/2009 14:04'!
+rootForGrabOf: aMorph
+	"Allow myself to be extracted."
+
+	(owner notNil and: [owner isPartsBin])
+		ifTrue: [^ super rootForGrabOf: aMorph]
+		ifFalse: [^ self].
+! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/28/2009 00:40'!
+showGeneratedSmalltalk
+	"StringHolder new contents: self asSmalltalk; openLabel: self class printString"	
+	self inform: self asSmalltalk! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/13/2009 12:53'!
+showResult
+	self inform: self evaluate printString! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/2/2009 22:13'!
+wordsFrom: camelCase
+	^self class wordsFrom: camelCase! !
+
+
+!ArgumentElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/6/2009 13:40'!
+acceptDroppingMorph: aMorph event: evt
+
+	self contentsForced: aMorph! !
+
+!ArgumentElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 6/5/2009 00:50'!
+asSmalltalk
+
+	contents ifNil: [^'nil '].
+	((#(	BlockElementMorph
+		LiteralElementMorph
+		ObjectElementMorph
+	) includes: contents class printString asSymbol)
+		or: [owner isKindOf: StepElementMorph])
+		ifTrue: [^contents asSmalltalk].
+
+	(contents isKindOf: MessageElementMorph) ifTrue: [
+		contents isUnary ifTrue: [^contents asSmalltalk].
+
+		contents isBinary ifTrue: [
+			owner isKeywords ifTrue: [ ^contents asSmalltalk]]
+
+	].
+
+	^'(', contents asSmalltalk, ')'! !
+
+!ArgumentElementMorph methodsFor: 'as yet unclassified' stamp: ' jens 1/8/2009 13:38'!
+contents
+	^contents! !
+
+!ArgumentElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/28/2009 00:51'!
+contents: anElement
+	contents ifNotNil: [contents delete].
+	anElement representsNil ifFalse: [
+		contents _ anElement.
+		self addMorphFront: contents ].
+	self fit.
+	self unHilite
+! !
+
+!ArgumentElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 21:09'!
+contentsForced: anElement
+	contents ifNotNil: [contents delete].
+	contents _ anElement.
+	contents position: self position.
+	self addMorphFront: contents.
+	self fit.
+	self unHilite
+! !
+
+!ArgumentElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 21:13'!
+drawOn: aCanvas 
+
+	|r bw|
+
+	bw _ self borderWidth.
+
+	"border"
+	"top"
+	r _ Rectangle origin: ((self left + bw) @ self top) corner: (self right @ (self top + bw)).
+	aCanvas fillRectangle: r color: self borderColorVeryDark.
+
+	"left"
+	r _ Rectangle origin: (self topLeft) corner: (self left + bw) @ (self bottom - bw).
+	aCanvas fillRectangle: r color: self borderColorDark.
+
+	"right"
+	r _ Rectangle origin: ((self right - bw) @ (self top + bw)) corner: self bottomRight.
+	aCanvas fillRectangle: r color: self borderColorLight.
+
+	"bottom"
+	r _ Rectangle origin: (self left @ (self bottom - bw)) corner: (self right - bw) @ self bottom.
+	aCanvas fillRectangle: r color: self borderColorVeryLight.
+
+	"body"
+	aCanvas fillRectangle: (Rectangle origin: (self topLeft + bw) corner: (self bottomRight - bw)) color: color
+! !
+
+!ArgumentElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 22:49'!
+fit
+	| h |
+	contents isNil
+		ifTrue: [
+			h _ MessageElementMorph labelFont height.
+			self extent: h @ h]
+		ifFalse: [
+			self extent: contents extent " + (self borderWidth * 2)".
+			"(owner isKindOf: StepElementMorph)
+				ifTrue: [self extent: self extent + (self borderWidth * 2)]."
+			contents position: bounds center - (contents extent // 2) ].
+	(owner respondsTo: #fit)
+		ifTrue: [owner fit]! !
+
+!ArgumentElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 00:06'!
+handlesMouseOverDragging: evt
+	"Return true if I want to receive mouseEnterDragging: and mouseLeaveDragging: when the hand drags something over me (button up or button down), or when the mouse button is down but there is no mouseDown recipient. The default response is false; subclasses that implement mouse mouseEnterDragging messages should override this to return true."
+
+	"NOTE:  If the hand state matters in these cases, it may be tested by constructs such as
+		event anyButtonPressed
+		event hand hasSubmorphs"
+
+	^ true
+! !
+
+!ArgumentElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 00:46'!
+hilite
+	oldColor _ color.
+	self color: Color white! !
+
+!ArgumentElementMorph methodsFor: 'as yet unclassified' stamp: ' jens 1/8/2009 14:47'!
+initialize
+	super initialize.
+	color _ Color veryVeryLightGray.
+	self fit! !
+
+!ArgumentElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 01:00'!
+mouseEnterDragging: evt
+	"Handle a mouseEnterDragging event. The mouse just entered my bounds with a button pressed or laden with submorphs. This default implementation does nothing."
+
+	| m |
+	evt hand hasSubmorphs ifFalse: [^self].
+	m _ evt hand submorphs first.
+	(self wantsDroppedMorph: m event: evt)
+		ifTrue: [
+			self extent: m extent  + (self borderWidth * 2).
+			self hilite ].
+	(owner respondsTo: #fit)
+		ifTrue: [owner fit]! !
+
+!ArgumentElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 00:48'!
+mouseLeaveDragging: evt
+	"Handle a mouseLeaveLaden event. The mouse just left my bounds with a button pressed or laden with submorphs. This default implementation does nothing."
+
+	self fit.
+	self unHilite! !
+
+!ArgumentElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/12/2009 20:53'!
+removeContents
+	contents ifNotNil: [ contents _ nil ].
+	self fit.
+! !
+
+!ArgumentElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 20:37'!
+rootForGrabOf: aMorph
+	"Answer the root of the morph structure to be picked up when the given morph is grabbed."
+
+	owner ifNotNil: [^owner rootForGrabOf: aMorph].
+	^nil
+
+"	(self isSticky and: [self isPartsDonor not])
+		ifTrue: [^ nil]
+		ifFalse: [
+			(owner isNil or: [owner isWorldOrHandMorph])
+				ifTrue: [^ self]
+				ifFalse: [
+					owner allowSubmorphExtraction
+						ifTrue: [^ self]
+						ifFalse: [^ owner rootForGrabOf: aMorph]]].
+"! !
+
+!ArgumentElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 00:47'!
+unHilite
+
+	oldColor ifNotNil: [
+		self color: oldColor]! !
+
+!ArgumentElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 20:51'!
+wantsDroppedMorph: aMorph event: evt
+
+	^contents isNil 
+		& (self ownerThatIsA: ElementPaletteMorph) isNil
+		& ((aMorph isKindOf: ObjectElementMorph) 
+		| (aMorph isKindOf: LiteralElementMorph) 
+		| (aMorph isKindOf: BlockElementMorph) 
+		| (aMorph isKindOf: MessageElementMorph))! !
+
+
+!BlockElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/19/2009 23:56'!
+addStep: aStepElement
+	steps contents isNil 
+		ifTrue: [steps contents: aStepElement]
+		ifFalse: [steps contents addToLast: aStepElement]! !
+
+!BlockElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/12/2009 23:35'!
+addVarNames: aCollection
+	palette addVarNames: aCollection
+! !
+
+!BlockElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 21:00'!
+addVariable
+	|ans|
+
+	ans _ FillInTheBlank request: 'add variable:'.
+	(ans size > 0) ifTrue: [self addVarNames: (Array with: (SyntaxElementMorph objectNameFrom: ans))]! !
+
+!BlockElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/19/2009 18:34'!
+addVariableNamed: aSymbol
+	palette addVariableNamed: aSymbol! !
+
+!BlockElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/15/2009 00:04'!
+addVariables
+	|ans|
+
+	ans _ FillInTheBlank request: 'add variables:'.
+	(ans size > 0) ifTrue: [self addVarNames: (ans findTokens: ' ')]! !
+
+!BlockElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/28/2009 07:32'!
+allVariableNames
+	^self variableNames! !
+
+!BlockElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/29/2009 22:33'!
+asSmalltalk
+	| ws vn|
+	ws _ WriteStream on: String new.
+	ws nextPut: $[.
+	(vn _ self variableNames) isEmpty ifFalse: [
+		vn do: [:n|
+			ws nextPut: $:.
+			ws nextPutString: n, ' ' ].
+		ws nextPutString: '| '].
+	ws nextPutString: steps asSmalltalk, ']'.
+	^ws contents! !
+
+!BlockElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/27/2009 23:01'!
+contextMenu
+	|m|
+	m _ CustomMenu new.
+"	m add: 'duplicate' action: #duplicate. "
+	m add: 'delete' action: #throwAway.
+	m add: 'add variable...' action: #addVariable.
+	m addLine.
+	m add: 'show code...' action: #showGeneratedSmalltalk.
+	m add: 'show result...' action: #showResult.
+	m add: 'evaluate' action: #evaluate.
+	^m! !
+
+!BlockElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/22/2009 00:17'!
+fit
+	| bw bw2 cw handle x y|
+	bw _ self borderWidth.
+	bw2 _ bw * 2.
+	cw _ self labelFont widthOf: $ .
+	handle _ cw * 2.
+
+	palette position: (self left + handle) @ (self top).
+	(palette height = 0)
+		ifTrue: [y _ self top + (bw * 3)]
+		ifFalse: [y _ palette bottom].
+	
+
+	steps position: (self left + bw2 + handle) @ y.
+
+	x _ (steps right + bw2) max: palette right.
+
+	self width: x - self left.
+	(palette height = 0)
+		ifTrue: [ self height: steps height + (self borderWidth * 5) ]
+		ifFalse: [self height: steps height + palette height + (bw2) ].
+
+	self refreshVarColors.
+
+	(owner respondsTo: #fit)
+		ifTrue: [owner fit]
+! !
+
+!BlockElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 21:19'!
+initialize
+	super initialize.
+	color _ Color paleBlue darker.
+	palette _ PaletteElementMorph new.
+	self addMorph: palette.
+	steps _ StepHolderElementMorph new.
+	steps color: color slightlyDarker.
+	self addMorph: steps.
+	self fit.! !
+
+!BlockElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 23:41'!
+refreshVarColors
+
+	self allMorphsDo: [:m|
+		((m isMemberOf: ObjectElementMorph) and: [
+			self allVariableNames includes: m name]) ifTrue: [
+				m color: self varColor ]]! !
+
+!BlockElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 00:18'!
+rootForGrabOf: aMorph
+	"Allow myself to be extracted."
+
+	(self ownerThatIsA: ElementPaletteMorph) ifNotNil: [
+		(self ownerThatIsA: MessageElementMorph)
+			ifNotNil: [^owner rootForGrabOf: owner ]].
+	^super rootForGrabOf: aMorph! !
+
+!BlockElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/21/2009 23:58'!
+varColor
+	^palette varColor! !
+
+!BlockElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/22/2009 00:05'!
+variableNames
+	^palette variableNames! !
+
+
+!LiteralElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/22/2009 23:54'!
+asSmalltalk
+	^textBox contents! !
+
+!LiteralElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/21/2009 22:15'!
+contents: aLiteral
+	(aLiteral isMemberOf: Array)
+		ifTrue: [ textBox label: '#', aLiteral printString ]
+		ifFalse: [ textBox label: aLiteral printString ]! !
+
+!LiteralElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/27/2009 23:01'!
+contextMenu
+	|m|
+	m _ CustomMenu new.
+"	m add: 'duplicate' action: #duplicate. "
+	m add: 'delete' action: #throwAway.
+	m addLine.
+	m add: 'show code...' action: #showGeneratedSmalltalk.
+
+	^m! !
+
+!LiteralElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 21:54'!
+fit
+
+	| bw cw handle |
+	bw _ self borderWidth.
+	cw _ self labelFont widthOf: $ .
+	handle _ cw * 2.
+
+	self extent: textBox extent + (bw * 4).
+	self width: self width + handle.
+
+	textBox position: (self left + handle + bw) @ (self center - (textBox extent // 2)) y.
+
+	(owner respondsTo: #fit)
+		ifTrue: [owner fit]
+! !
+
+!LiteralElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 22:04'!
+initialize
+	super initialize.
+	color _ Color blue darker.
+	textBox _ TextBoxElementMorph new label: ''.
+	self addMorph: textBox.
+	self fit! !
+
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/15/2009 21:27'!
+acceptDroppingMorph: aMorph event: evt
+
+	self addToCascade: aMorph! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: ' jens 1/8/2009 14:41'!
+addLabel
+	label _ StringMorph contents: '' font: self labelFont.
+	label color: self labelColor.
+	self addMorphFront: label.
+! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: ' jens 1/8/2009 14:29'!
+addReceiver
+	receiver _ ArgumentElementMorph new.
+	self addMorphFront: receiver.! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/15/2009 18:52'!
+addToCascade: aMessageElement
+	cascade add: aMessageElement.
+	self addMorph: aMessageElement.
+	aMessageElement embedAsCascade! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 00:26'!
+argumentCount
+	^arguments size! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/21/2009 22:42'!
+arguments: anArray
+
+	1 to: anArray size do: [:i|
+		(arguments size < i) ifFalse: [
+			(arguments at: i) contents: (anArray at: i ) ]]! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/23/2009 01:00'!
+asSmalltalk
+	| ws |
+	receiver isHidden ifTrue: [^self keywordsAndArgs ].
+	cascade isEmpty not ifTrue: [ ^self cascadeCode ].
+
+	ws _ WriteStream on: String new.
+	^ws
+		nextPutString: receiver asSmalltalk, ' ';
+		nextPutString: self keywordsAndArgs;
+		contents! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 23:49'!
+assign
+	self selector: #_ arguments: { ObjectElementMorph new }.
+	(arguments at: 1) contents delete. 
+	(arguments at: 1) removeContents! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 23:52'!
+beBinary
+	self binarySelector: selector! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 23:53'!
+binarySelector: aString
+
+	| lb arg |
+
+	selector _ aString.
+	label ifNotNil: [label delete. label _ nil].
+	labels do: [:each| each delete ].
+	arguments do: [:each| each delete ].
+	labels _ OrderedCollection new.
+	arguments _ OrderedCollection new.
+
+	lb _ ((StringMorph contents: aString font: self labelFont) color: self labelColor).
+	labels add: lb.
+	self addMorph: lb.
+	arg _ ArgumentElementMorph new.
+	arguments add: arg.
+	self addMorph: arg.
+	self fit! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/22/2009 00:42'!
+buildLabelsAndArgs
+
+	| tokens lb arg |
+	label ifNotNil: [label delete. label _ nil].
+	labels do: [:each| each delete ].
+	arguments do: [:each| each delete ].
+	labels _ OrderedCollection new.
+	arguments _ OrderedCollection new.
+
+	((selector includes: $:) not | (selector = ':=')) ifTrue: [
+		self label: (self wordsFrom: selector).
+		^self ].
+
+	tokens _ selector findTokens: ':'.
+	tokens do: [:each| 
+		lb _ ((StringMorph contents: (self wordsFrom: each) font: self labelFont) color: self labelColor).
+		labels add: lb.
+		self addMorph: lb.
+		arg _ ArgumentElementMorph new.
+		arguments add: arg.
+		self addMorph: arg].
+		! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/23/2009 01:10'!
+cascadeCode
+	| ws |
+	ws _ WriteStream on: String new.
+	ws nextPutString: receiver asSmalltalk.
+	cascade do: [:msg|
+		ws cr;
+			nextPutString: msg asSmalltalk, ' ';
+			nextPut:$; ].
+	^ws
+		nextPutString: self keywordsAndArgs;
+		cr; 
+		contents! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/27/2009 23:02'!
+contextMenu
+	|m|
+	m _ CustomMenu new.
+"	m add: 'duplicate' action: #duplicate. "
+	m add: 'delete' action: #throwAway.
+	self isRenameable
+		ifTrue: [
+			m add: 'rename...' action: #editSelector.
+			arguments isEmpty ifTrue: [
+				m add: 'add argument' action: #beBinary ].
+			m addLine ]
+		ifFalse: [m addLine ].
+	m add: 'show code...' action: #showGeneratedSmalltalk.
+	m add: 'show result...' action: #showResult.
+	m add: 'evaluate' action: #evaluate.
+	^m! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 23:21'!
+editSelector
+	|ans|
+
+	ans _ FillInTheBlank request: 'selector:' initialAnswer: selector.
+	(ans size > 0) ifTrue: [self selector: ans]! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/15/2009 18:51'!
+embedAsCascade
+	receiver isHidden: true.
+	self fit! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/15/2009 23:30'!
+extractFromCascade
+	receiver isHidden: false.
+	self fit! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/21/2009 21:41'!
+fit
+
+	receiver isHidden ifTrue: [^self fitForCascade ].
+	cascade isEmpty not ifTrue: [ ^self fitCascaded ].
+	self isStacked
+	ifTrue: [self fitStacked]
+	ifFalse: [self fitInLine]! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/21/2009 22:08'!
+fitCascaded
+	| cw bw bw2 x y arg lb maxHeight maxRight labelTop labelBottom cntr |
+	cw _ self labelFont widthOf: $ .
+	bw _ self borderWidth.
+	bw2 _ bw * 2.
+
+	x _ receiver right + bw2.
+	maxRight _ x.
+	y _ self top + bw2.
+
+	cascade do: [:eachElement |
+		eachElement position: x @ y.
+		maxRight _ maxRight max: eachElement right.
+		y _ eachElement bottom ].
+	x _ x + (bw * 3).
+	labelTop _ y + bw.
+
+	labels isEmpty 
+		ifTrue: [
+			label position: x @ labelTop.
+			maxRight _ maxRight max: label right.
+			maxHeight _ label height.
+			labelBottom _ label bottom ]
+		ifFalse: [
+			maxHeight _ labels anyOne height.
+			1 to: labels size do: [:i |
+				arg _ arguments at: i.
+				lb _ labels at: i.
+				maxHeight _ maxHeight max: (arg height).
+
+				lb position: x @ labelTop.
+				x _ x + lb width + cw.
+				arg position: x @ labelTop.
+				x _ x + arg width + cw ].
+			x _ x - cw.
+			maxRight _ maxRight max: x.
+
+			cntr _ labelTop + (maxHeight // 2).
+
+			arguments do: [:each|
+				each position: (each position x @ (cntr - (each height // 2))) ].
+			labels do: [:each|
+				each position: (each position x @ (cntr - (each height // 2))) ]].
+
+	labelBottom _ labelTop + maxHeight.
+	labelBottom _ labelBottom max: receiver bottom.
+
+	self extent: ((maxRight - self left) @ (labelBottom - self top)) + bw2.
+
+
+
+	(owner respondsTo: #fit)
+		ifTrue: [owner fit]! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/15/2009 20:51'!
+fitForCascade
+
+	| cw bw bw2 x arg lb maxHeight |
+	cw _ self labelFont widthOf: $ .
+	bw _ self borderWidth.
+	bw2 _ bw * 2.
+
+	x _ self left + bw2.
+
+	labels isEmpty 
+		ifTrue: [^super fit]
+		ifFalse: [
+			maxHeight _ labels anyOne height.
+			1 to: labels size do: [:i |
+				arg _ arguments at: i.
+				lb _ labels at: i.
+				maxHeight _ maxHeight max: (arg height).
+
+				lb position: x @ (lb position y).
+				x _ x + lb width + cw.
+				arg position: x @ (arg position y).
+				x _ x + arg width + cw ].
+			self extent: (x - self position x - cw - bw2) @ maxHeight + (bw2 * 2).
+			receiver position: (receiver position x @ (bounds center y - (receiver height // 2))).
+			arguments do: [:each|
+				each position: (each position x @ (bounds center y - (each height // 2))) ].
+			labels do: [:each|
+				each position: (each position x @ (bounds center y - (each height // 2))) ].
+].
+
+	(owner respondsTo: #fit)
+		ifTrue: [owner fit]! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/22/2009 01:06'!
+fitInLine
+
+	| h w cw bw bw2 x arg lb maxHeight |
+	cw _ self labelFont widthOf: $ .
+	bw _ self borderWidth.
+	bw2 _ bw * 2.
+
+	receiver position: (self left + bw2) @ (self top + bw2).
+	x _ receiver right + cw.
+
+	labels isEmpty 
+		ifTrue: [
+			h _ receiver height + (bw2 * 2).
+			w _ receiver width + (label width) + (cw * 1.5) + (bw2 * 2).
+
+			self width: w.
+			self height: h.
+
+			label position: x @ (bounds center y - (label height // 2)).
+
+			self isLabelFirst ifTrue: [
+				label position: (receiver position x) @ (label position y).
+				receiver position: (label right + cw) @ (receiver position y) ]]
+		ifFalse: [
+			maxHeight _ receiver height.
+			1 to: labels size do: [:i |
+				arg _ arguments at: i.
+				lb _ labels at: i.
+				maxHeight _ maxHeight max: (arg height).
+
+				lb position: x @ (lb position y).
+				x _ x + lb width + cw.
+				arg position: x @ (arg position y).
+				x _ x + arg width + cw ].
+			self extent: (x - self position x - cw - bw2) @ maxHeight + (bw2 * 2).
+			receiver position: (receiver position x @ (bounds center y - (receiver height // 2))).
+			arguments do: [:each|
+				each position: (each position x @ (bounds center y - (each height // 2))) ].
+			labels do: [:each|
+				each position: (each position x @ (bounds center y - (each height // 2))) ].
+].
+
+	(owner respondsTo: #fit)
+		ifTrue: [owner fit]! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/15/2009 19:08'!
+fitStacked
+
+	| h w cw bw bw2 x y arg lb maxRight |
+	cw _ self labelFont widthOf: $ .
+	bw _ self borderWidth.
+	bw2 _ bw * 2.
+
+	receiver position: (self left + bw2) @ (self top + bw2).
+	x _ receiver right + cw.
+	y _ receiver bottom + bw.
+
+	labels isEmpty 
+		ifTrue: [
+			h _ receiver height + (bw2 * 2).
+			w _ receiver width + (label width) + (cw * 1.5) + (bw2 * 2).
+
+			self width: w.
+			self height: h.
+
+			label position: x @ (bounds center y - (label height // 2)) ]
+		ifFalse: [
+			maxRight _ receiver right.
+			1 to: labels size do: [:i |
+				arg _ arguments at: i.
+				lb _ labels at: i.
+
+				lb position: receiver left + cw @ (y + ((arg height - lb height) // 2)).
+				arg position: (lb right + cw) @ y.
+
+				y _ y + arg height + bw.
+
+				maxRight _ maxRight max: (arg right) ].
+
+			self extent: ((maxRight - self left) + bw2) @ ((y - self top) + bw)].
+
+	(owner respondsTo: #fit)
+		ifTrue: [owner fit]! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 23:32'!
+fullCopy
+	|copy|
+	copy _ self class new selector: selector.
+	(#ifTrue:ifFalse: = selector) 
+		ifTrue: [copy yesNo ].
+	(#_ = selector) 
+		ifTrue: [copy assign ].
+	copy position: self position.
+	(copy argumentCount < self argumentCount)
+		ifTrue: [copy beBinary].
+	^copy! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/15/2009 18:39'!
+hasCascade
+	^cascade isEmpty not! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/15/2009 18:14'!
+initialize
+	super initialize.
+	labels _ OrderedCollection new.
+	arguments _ OrderedCollection new.
+	cascade _ OrderedCollection new.
+	color _ Color orange darker.
+	self addLabel.
+	self addReceiver.
+	self fit.! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 18:24'!
+isBinary
+
+	^(arguments size = 1) and: [
+		selector asString last ~= ($:)]! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 6/5/2009 00:51'!
+isKeywords
+	^arguments size > 0 & self isBinary not! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/22/2009 01:58'!
+isLabelFirst
+	|firstWord disabled|
+	disabled _ true. "change this to experiment with swapped unaries"
+	disabled ifTrue: [^false].
+
+	selector ifNil: [^false].
+	firstWord _ (self label findTokens: ' ') first. 
+		(#('is' 'as' 'has'	'wants') includes: firstWord)
+			ifTrue: [ ^false].
+
+	^arguments isEmpty & cascade isEmpty & receiver isHidden not! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/22/2009 23:24'!
+isStacked
+	^((#(
+		'isNil:'
+		'ifNil:'
+		'ifNotNil:'
+		'ifTrue:'
+		'ifFalse:'
+		'ifTrue:ifFalse:'
+		'ifFalse:ifTrue:'
+		'select:'
+		'detect:'
+		'detect:ifNone:'
+		'collect:'
+		'reject:'
+		'select:'
+		'do:'
+		'to:do:'
+		'whileTrue:'
+		'or:'
+		'and:'
+	)
+	includes: selector) or: [
+	(arguments select: [:arg | 
+		arg contents isKindOf: BlockElementMorph])
+			size > 0 ]) or: [ selector notNil and: [
+				(selector findTokens: ':') size > 3] ]
+! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 17:52'!
+isUnary
+
+	^arguments isEmpty! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/23/2009 02:34'!
+keywordsAndArgs
+	| kw ws |
+	kw _ selector keywords.
+	(selector = ':=') ifTrue: [kw _ #('_')].
+	ws _ WriteStream on: String new.
+	1 to: kw size do: [:i|
+		ws nextPutString: (kw at: i).
+		(arguments size < i) ifFalse: [
+			ws nextPutString: ' ', (arguments at: i) asSmalltalk, ' ' ]].
+	^ws contents! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: ' jens 1/8/2009 14:06'!
+labelFont
+	^self class labelFont! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: ' jens 1/8/2009 15:26'!
+receiver
+	^receiver contents! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/20/2009 00:09'!
+receiver: anElement
+	receiver contents: anElement! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/15/2009 23:30'!
+removeCascadedElement: element
+
+	cascade remove: element ifAbsent: [].
+	self fit.
+	element extractFromCascade.
+	^self! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/29/2009 22:53'!
+rootForGrabOf: aMorph
+	"Answer the root of the morph structure to be picked up when the given morph is grabbed."
+
+	aMorph == self ifTrue: [^super rootForGrabOf: aMorph ].
+	(aMorph isKindOf: self class) ifTrue: [^self].
+	^super rootForGrabOf: aMorph
+! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/2/2009 23:38'!
+selector: aString
+
+	selector _ aString.
+	self buildLabelsAndArgs.
+	self fit! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/29/2009 22:57'!
+selector: aString arguments: anArray
+
+	"for decompilation purposes only. Caution: this method assumes that the number of arguments matches the
+	number of parameters required by the selector."
+
+	| tokens lb arg |
+
+	selector _ aString.
+	label ifNotNil: [label delete. label _ nil].
+	labels do: [:each| each delete ].
+	arguments do: [:each| each delete ].
+	labels _ OrderedCollection new.
+	arguments _ OrderedCollection new.
+
+	anArray isEmpty ifTrue: [
+		self label: (self wordsFrom: selector).
+		^self fit ].
+
+	tokens _ selector findTokens: ':'.
+	1 to: tokens size do: [:i |
+		lb _ ((StringMorph 
+				contents: (self wordsFrom: (tokens at: i)) 
+				font: self labelFont) 
+				color: self labelColor).
+		labels add: lb.
+		self addMorph: lb.
+		arg _ ArgumentElementMorph new.
+		arguments add: arg.
+		self addMorph: arg.
+		arg contents: (anArray at: i)].
+
+	self fit! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/15/2009 23:34'!
+wantsDroppedMorph: aMorph event: evt
+
+	(owner isKindOf: self class) ifTrue: [owner hasCascade ifTrue: [^false]].
+	^(aMorph isKindOf: self class) and: [ (aMorph hasCascade not) & (aMorph receiver isNil) ]! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 23:31'!
+yesNo
+	^self selector: #ifTrue:ifFalse: arguments: { BlockElementMorph new. BlockElementMorph new }.
+! !
+
+
+!MethodElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/2/2009 01:03'!
+asCompiledMethodForClass: aClass
+	| mn1 cm st |
+	st _ self asSmalltalk.
+	mn1 _ Compiler new compile: st in: aClass notifying: nil ifFail: [self inform: 'compiling failed'].
+	cm _ mn1 generate: #(0 0 0 0).
+	^cm ! !
+
+!MethodElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/28/2009 00:37'!
+asSmalltalk
+	| ws vn|
+	ws _ WriteStream on: String new.
+	ws nextPutString: header asSmalltalk; cr; cr.
+	(vn _ self localVariableNames) isEmpty ifFalse: [
+		ws nextPutString: '| '.
+		vn do: [:n|
+			ws nextPutString: n, ' ' ].
+		ws
+			nextPutString: '|';
+			nextPut: Character cr].
+	ws nextPutString: steps asSmalltalk.
+	^ws contents! !
+
+!MethodElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 6/5/2009 00:35'!
+contextMenu
+	|m|
+	m _ super contextMenu.
+	self isRenameable ifTrue: [
+		m addLine.
+		m add: 'rename...' action: #editSelector ].
+	^m! !
+
+!MethodElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/16/2009 00:24'!
+editSelector
+	header editSelector! !
+
+!MethodElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 10:58'!
+fit
+	| bw bw2 cw handle x y editor|
+
+	header ifNil: [^self ].
+	bw _ self borderWidth.
+	bw2 _ bw * 2.
+	cw _ self labelFont widthOf: $ .
+	handle _ cw.
+
+	header position: (self left + bw + handle) @ (self top).
+
+	palette position: (self left + handle) @ (header bottom).
+	(palette height = 0)
+		ifTrue: [y _ header bottom + (bw * 3)]
+		ifFalse: [y _ palette bottom].
+	
+
+	steps position: (self left + bw2 + handle) @ y.
+
+	x _ ((steps right + bw2) max: palette right) max: header right.
+
+	self width: x - self left.
+	(palette height = 0)
+		ifTrue: [ self height: steps height + header height + (bw * 6) ]
+		ifFalse: [self height: steps height + palette height + header height + (bw2) ].
+
+	self refreshVarColors.
+
+	(owner respondsTo: #fit)
+		ifTrue: [^owner fit].
+
+	editor _ (self ownerThatIsA: ElementsMethodEditorMorph).
+	editor ifNotNil: [editor methodModified ]! !
+
+!MethodElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 02:37'!
+fitMethod
+	|editor|
+	(self findA: StepHolderElementMorph) fitMethod.
+	editor _ (self ownerThatIsA: ElementsMethodEditorMorph).
+	editor ifNotNil: [editor methodModified ]! !
+
+!MethodElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 00:48'!
+initialize
+	super initialize.
+	color _ Color paleTan.
+	steps color: color slightlyDarker.
+	header _ MessageHeaderElementMorph new.
+	self addMorph: header.
+	self fit.! !
+
+!MethodElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 14:22'!
+isRenameable
+	^true! !
+
+!MethodElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/28/2009 00:37'!
+localVariableNames
+	^super variableNames! !
+
+!MethodElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 20:58'!
+rootForGrabOf: aMorph
+	"Allow myself to be extracted."
+
+	(self ownerThatIsA: ElementsMethodEditorMorph) notNil
+		ifTrue: [^nil].
+	^super rootForGrabOf: aMorph! !
+
+!MethodElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 22:33'!
+selector
+	^header selector asSymbol! !
+
+!MethodElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 00:31'!
+selector: aSymbol arguments: aCollection
+	header selector: aSymbol arguments: aCollection! !
+
+!MethodElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/24/2009 23:03'!
+stackBottom
+	steps contents isNil
+		ifTrue: [^self bottom ]
+		ifFalse: [^steps contents stack last bottom ]
+	! !
+
+!MethodElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/22/2009 00:06'!
+variableNames
+	^super variableNames, header variableNames! !
+
+
+!ObjectElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/22/2009 23:44'!
+asSmalltalk 
+
+	^name ifNil: ['undefined']! !
+
+!ObjectElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/27/2009 23:02'!
+contextMenu
+	|m|
+	m _ CustomMenu new.
+"	m add: 'duplicate' action: #duplicate. "
+	m add: 'delete' action: #throwAway.
+	(owner class == PaletteElementMorph)
+		ifTrue: [m add: 'remove' action: #removeFromPalette ]
+		ifFalse: [
+		 	self isRenameable ifTrue: [
+				m add: 'rename...' action: #editLabel ]].
+	m addLine.
+	m add: 'show code...' action: #showGeneratedSmalltalk.
+
+	^m! !
+
+!ObjectElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 23:15'!
+editLabel
+	|ans|
+
+	ans _ FillInTheBlank request: 'rename:' initialAnswer: label contents.
+	(ans size > 0) ifTrue: [self label: ans]! !
+
+!ObjectElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/9/2009 11:14'!
+initialize
+	super initialize.
+	color _ Color blue darker.
+! !
+
+!ObjectElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 14:26'!
+isRenameable
+	| editor method |
+	editor _ (self ownerThatIsA: ElementsMethodEditorMorph).
+	editor isNil ifTrue: [^true].
+	method _ (self ownerThatIsA: MethodElementMorph).
+	method ifNotNil: [
+		^(self ownerThatIsA: StepHolderElementMorph) isNil].
+	^false
+! !
+
+!ObjectElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/15/2009 00:13'!
+label
+	^label contents! !
+
+!ObjectElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 6/2/2009 22:28'!
+label: aString
+
+	super label: aString.
+
+	(owner isKindOf: PaletteElementMorph)
+		ifTrue: [^self color: owner ownerColor twiceDarker ].
+
+	(#('self' 'super' 'nil' 'true' 'false' 'thisContext') includes: aString)
+		ifTrue: [^self color: Color red darker].
+
+	aString first isUppercase
+		ifTrue: [
+			(Smalltalk classNames includes: aString asSymbol)
+				ifTrue: [^self color: Color magenta darker darker].
+			(Smalltalk keys includes: aString asSymbol)
+				ifTrue: [^self color: Color magenta twiceDarker darker].
+
+			^self color: Color blue twiceDarker ].
+
+	self color: Color blue darker..
+
+! !
+
+!ObjectElementMorph methodsFor: 'as yet unclassified' stamp: ' jens 1/8/2009 15:14'!
+labelFont
+	^StrikeFont fontName: 'Verdana' size: 10! !
+
+!ObjectElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/15/2009 00:17'!
+removeFromPalette
+	owner removeVariable: self! !
+
+!ObjectElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/28/2009 00:50'!
+representsNil
+	^name = 'nil'! !
+
+
+!PaletteElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/2/2009 21:31'!
+addVarNames: aCollectionOfSymbols
+	aCollectionOfSymbols do: [:each|
+		self addVariableNamed: each asSymbol ]! !
+
+!PaletteElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/2/2009 21:31'!
+addVariableNamed: aSymbol
+
+	| v |
+	v _ ObjectElementMorph new label: aSymbol asString.
+	v color: self varColor.
+	variables at: aSymbol put: v.
+	self addMorph: v.
+	self fit! !
+
+!PaletteElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/2/2009 21:31'!
+drawOn: aCanvas 
+
+^self! !
+
+!PaletteElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/2/2009 21:31'!
+fit
+	| x y bw2|
+	bw2 _ self borderWidth * 2.
+
+	variables isEmpty ifTrue: [
+		self extent: 0@0.
+		(owner respondsTo: #fit)
+			ifTrue: [^owner fit]
+			ifFalse: [^self]].
+
+	self height: variables anyOne height + (bw2 * 2).
+	x _ self left + bw2.
+	y _ (self center - (variables anyOne extent // 2)) y.
+	variables keys asSortedCollection do: [:vn |
+		(variables at: vn) position: x @ y.
+		x _ (variables at: vn) right + bw2.
+		].
+	self width: (x - self position x).
+
+	(owner respondsTo: #fit)
+		ifTrue: [^owner fit]! !
+
+!PaletteElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/2/2009 21:31'!
+initialize
+	super initialize.
+	variables _ Dictionary new.
+	color _ Color transparent.
+	self fit! !
+
+!PaletteElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/2/2009 21:31'!
+isPartsBin
+
+	^ true
+! !
+
+!PaletteElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/2/2009 21:31'!
+ownerColor
+	owner ifNotNil: [^owner color].
+	^Color gray! !
+
+!PaletteElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 21:27'!
+removeVariable: element
+
+	element delete.
+	variables removeKey: element name asSymbol.
+	self fit! !
+
+!PaletteElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/9/2009 21:28'!
+rootForGrabOf: aMorph
+	"I act like a parts bin; answer a new copy of the morph being extracted."
+
+	| v |
+	v _ aMorph ownerThatIsA: ObjectElementMorph.
+	v ifNotNil: [^v fullCopy].
+
+	(owner isKindOf: MethodElementMorph)
+		ifTrue: [^owner rootForGrabOf: aMorph].
+	^owner! !
+
+!PaletteElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/2/2009 21:31'!
+varColor
+	| oc |
+	oc _ owner color.
+	^Color
+		h: oc hue s: 0.5 v: 0.5
+"	^owner color mixed: 0.93 with: Color black"! !
+
+!PaletteElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 21:35'!
+variableNames
+	^variables collect: [:m| m name ]! !
+
+
+!MessageHeaderElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/28/2009 21:53'!
+asSmalltalk
+	| kw ws |
+	kw _ selector keywords.
+	ws _ WriteStream on: String new.
+	1 to: kw size do: [:i|
+		ws nextPutString: (kw at: i).
+		(variables size < i) ifFalse: [
+			ws nextPutString: ' ', (variables at: i) asSmalltalk, ' ' ]].
+	^ws contents! !
+
+!MessageHeaderElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/28/2009 23:06'!
+beBinary
+	self selector: selector arguments: #(arg)! !
+
+!MessageHeaderElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/28/2009 23:07'!
+contextMenu
+	|m|
+	m _ CustomMenu new.
+	m add: 'rename...' action: #editSelector.
+	arguments isEmpty ifTrue: [
+		m add: 'add argument' action: #beBinary ].
+	^m! !
+
+!MessageHeaderElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 21:05'!
+editSelector
+	|ans parms tokens|
+
+	parms _ OrderedCollection new.
+	ans _ FillInTheBlank request: 'selector:' initialAnswer: selector.
+	ans isEmpty ifTrue: [^self].
+	ans _ (SyntaxElementMorph selectorFrom: ans) asString.
+	(ans includes: ($:)) ifFalse: [
+		^self selector: ans arguments: #() ].
+
+	tokens _ ans findTokens: ':'.
+	1 to: tokens size do: [:i |
+		parms add: 'arg', i printString ].
+
+	self selector: ans arguments: parms.! !
+
+!MessageHeaderElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 00:31'!
+fit
+	| cw bw bw2 x arg lb maxHeight |
+
+	labels ifNil: [^self].
+	cw _ (self labelFont widthOf: $ ) // 2.
+	bw _ self borderWidth.
+	bw2 _ bw * 2.
+
+	x _ self left + bw.
+	maxHeight _ self labelFont height.
+
+	1 to: labels size do: [:i |
+		lb _ labels at: i.
+		lb position: x @ self center y.
+		x _ lb right + cw.
+		(variables size >= i)
+			ifTrue: [
+				arg _ variables at: i.
+				maxHeight _ maxHeight max: arg height.
+				arg position: x @ self center y.
+				x _ arg right + cw]].
+
+	self extent: (x - self position x - cw - bw2) @ maxHeight + (bw2 * 2).
+	variables do: [:each|
+		each position: (each position x @ (bounds center y - (each height // 2))) ].
+	labels do: [:each|
+		each position: (each position x @ (bounds center y - (each height // 2))) ].
+
+	(owner respondsTo: #fit)
+		ifTrue: [^owner fit]! !
+
+!MessageHeaderElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 00:11'!
+initialize
+	super initialize.
+	labels _ OrderedCollection new.
+	variables _ OrderedCollection new.
+	self fit! !
+
+!MessageHeaderElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 00:14'!
+labelColor
+	^Color black! !
+
+!MessageHeaderElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 23:39'!
+labelFont
+	^StrikeFont fontName: 'VerdanaBold' size: 10! !
+
+!MessageHeaderElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/28/2009 00:13'!
+selector
+	^selector! !
+
+!MessageHeaderElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/28/2009 22:53'!
+selector: aString arguments: anArray
+
+	"for decompilation purposes only. Caution: this method assumes that the number of arguments matches the
+	number of parameters required by the selector."
+	| tokens lb arg |
+
+	selector _ aString.
+
+	label ifNotNil: [label delete. label _ nil].
+	labels do: [:each| each delete ].
+	labels _ OrderedCollection new.
+	arguments _ anArray.
+	variables do: [:each| each delete ].
+	variables _ OrderedCollection new.
+
+	tokens _ selector findTokens: ':'.
+	1 to: tokens size do: [:i |
+		lb _ ((StringMorph 
+				contents: (self wordsFrom: (tokens at: i)) 
+				font: self labelFont) 
+				color: self labelColor).
+		labels add: lb.
+		self addMorph: lb.
+		(anArray size < i) ifFalse: [
+			arg _ ObjectElementMorph new label: (anArray at: i) asString.
+			arg color: owner color twiceDarker.
+			variables add: arg.
+			self addMorph: arg]].
+
+	self fit
+! !
+
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/9/2009 14:50'!
+acceptDroppingMorph: aMorph event: evt
+
+	self next: aMorph! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 22:35'!
+addExpression
+	expression _ ArgumentElementMorph new.
+"	expression color: color muchLighter."
+	self addMorphFront: expression.! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/19/2009 22:06'!
+addToLast: anElement
+	self stack last next: anElement! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/23/2009 02:25'!
+asSmalltalk
+	expression ifNotNil: [^expression asSmalltalk]! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/9/2009 14:02'!
+borderWidth
+	^1
+! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/27/2009 23:02'!
+contextMenu
+	|m|
+	m _ CustomMenu new.
+"	m add: 'duplicate' action: #duplicate. "
+	m add: 'delete' action: #throwAway.
+	m addLine.
+	m add: 'show code...' action: #showGeneratedSmalltalk.
+	m add: 'show result...' action: #showResult.
+	m add: 'evaluate' action: #evaluate.
+	^m! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 20:26'!
+drawOn: aCanvas 
+
+	|r bw indent dent bw2 bw3 |
+	bw _ self borderWidth.
+	bw2 _ bw * 2.
+	bw3 _ bw * 3.
+	indent _ bw * 5.
+	dent _ bw * 5.
+
+	"border"
+	"top"
+	r _ Rectangle origin: ((self left + bw) @ self top) corner: (self left + indent) @ (self top + bw).
+	aCanvas fillRectangle: r color: self borderColorVeryLight.
+
+	r _ Rectangle origin: ((self left + indent - bw) @ (self top + bw)) corner: (self left + indent) @ (self top + bw3).
+	aCanvas fillRectangle: r color: self borderColorDark.
+
+	r _ Rectangle origin: ((self left + indent) @ (self top + bw2)) corner: (self left + indent + dent + bw) @ (self top + bw3).
+	aCanvas fillRectangle: r color: self borderColorVeryLight.
+
+	r _ Rectangle origin: ((self left + indent + dent) @ (self top)) corner: (self left + indent + dent + bw) @ (self top + bw2).
+	aCanvas fillRectangle: r color: self borderColorLight.
+
+	r _ Rectangle origin: ((self left + indent + dent + bw) @ (self top)) corner: (self right) @ (self top + bw).
+	aCanvas fillRectangle: r color: self borderColorVeryLight.
+
+	"left"
+	r _ Rectangle origin: (self topLeft) corner: (self left + bw) @ (self bottom - bw3).
+	aCanvas fillRectangle: r color: self borderColorLight.
+
+	"right"
+	r _ Rectangle origin: ((self right - bw) @ (self top + bw)) corner: (self right @ (self bottom - bw2)).
+	aCanvas fillRectangle: r color: self borderColorDark.
+
+	"bottom"
+	r _ Rectangle origin: (self left @ (self bottom - bw3)) corner: (self left + indent) @ (self bottom - bw2).
+	aCanvas fillRectangle: r color: self borderColorVeryDark.
+
+	r _ Rectangle origin: (self left + indent) @ (self bottom - bw3) corner: (self left + indent + bw) @ (self bottom - bw).
+	aCanvas fillRectangle: r color: self borderColorLight.
+
+	r _ Rectangle origin: (self left + indent) @ (self bottom - bw) corner: (self left + indent + dent - bw) @ (self bottom).
+	aCanvas fillRectangle: r color: self borderColorVeryDark.
+
+	r _ Rectangle origin: (self left + indent + dent - bw) @ (self bottom - bw2) corner: (self left + indent + dent) @ (self bottom).
+	aCanvas fillRectangle: r color: self borderColorDark.
+
+	r _ Rectangle origin: (self left + indent + dent - bw) @ (self bottom - bw3) corner: (self right - bw) @ (self bottom - bw2).
+	aCanvas fillRectangle: r color: self borderColorVeryDark.
+
+	"body"
+"	aCanvas fillRectangle: (Rectangle origin: (self left + bw) @ (self top + bw3) corner: (self right - bw) @ (self bottom - bw3)) color: color."
+
+	aCanvas fillRectangle: (Rectangle origin: (self left + bw) @ (self top + bw3) corner: (self right - bw) @ (self center y - bw)) color: color twiceLighter.
+
+	aCanvas fillRectangle: (Rectangle origin: (self left + bw) @ (self center y - bw) corner: (self right - bw) @ (self center y)) color: color lighter.
+
+	aCanvas fillRectangle: (Rectangle origin: (self left + bw) @ (self center y) corner: (self right - bw) @ (self bottom - bw3)) color: color.
+
+
+	aCanvas fillRectangle: (Rectangle origin: (self left + bw) @ (self top + bw) corner: (self left + indent - bw) @ (self top + bw3)) color: color twiceLighter.
+
+	aCanvas fillRectangle: (Rectangle origin: (self left + indent + dent + bw) @ (self top + bw) corner: (self right - bw) @ (self top + bw3)) color: color twiceLighter.
+
+	aCanvas fillRectangle: (Rectangle origin: (self left + indent + bw) @ (self bottom - bw3) corner: (self left + indent + dent - bw) @ (self bottom - bw)) color: color.
+! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/19/2009 22:38'!
+expression: anElement
+	expression contents: anElement! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/29/2009 22:27'!
+fit
+
+	| cw handle bw x y|
+	bw _ self borderWidth.
+	cw _ self labelFont widthOf: $ .
+	handle _ cw * 3.
+
+	self width: expression width  + handle + (bw * 3).
+	self height: expression height + (bw * 7).
+
+
+	x _ self left + bw + handle.
+	y _ (bounds center - (expression extent // 2)) y.
+
+	expression position: x @ y.
+
+	next isNil ifFalse:[
+		next position: self left @ (self bottom - (self borderWidth * 2))].
+
+	(owner respondsTo: #fit)
+		ifTrue: [owner fit]! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 00:16'!
+handlesMouseOverDragging: evt
+	"Return true if I want to receive mouseEnterDragging: and mouseLeaveDragging: when the hand drags something over me (button up or button down), or when the mouse button is down but there is no mouseDown recipient. The default response is false; subclasses that implement mouse mouseEnterDragging messages should override this to return true."
+
+	"NOTE:  If the hand state matters in these cases, it may be tested by constructs such as
+		event anyButtonPressed
+		event hand hasSubmorphs"
+
+	^ true
+! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 23:14'!
+hilite
+
+	oldColor _ color.
+	self color: Color white.
+	self allOwners do: [:each|
+		(each isKindOf: StepElementMorph)
+			ifTrue: [each unHilite ]]! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/9/2009 14:40'!
+initialize
+	super initialize.
+	color _ Color lightGreen twiceDarker.
+	self addExpression.
+	self fit.! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/11/2009 22:50'!
+isLast
+	^next isNil! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/9/2009 14:02'!
+labelFont
+	^StrikeFont fontName: 'Verdana' size: 10! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/11/2009 22:51'!
+last
+	self isLast
+		ifTrue: [^self]
+		ifFalse: [^next last]! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 00:59'!
+mouseEnterDragging: evt
+	"Handle a mouseEnterDragging event. The mouse just entered my bounds with a button pressed or laden with submorphs. This default implementation does nothing."
+
+	| m |
+	evt hand hasSubmorphs ifFalse: [^self].
+	m _ evt hand submorphs first.
+	(self wantsDroppedMorph: m event: evt)
+		ifTrue: [
+			self hilite ].! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 00:40'!
+mouseLeaveDragging: evt
+	"Handle a mouseLeaveLaden event. The mouse just left my bounds with a button pressed or laden with submorphs. This default implementation does nothing."
+
+	self unHilite! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/11/2009 23:08'!
+next
+	^next! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 00:42'!
+next: anElement
+	next _ anElement.
+	self addMorphFront: next.
+	self fit.
+	self unHilite! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/11/2009 23:26'!
+removeNext
+	| holder |
+	next ifNotNil: [next _ nil ].
+	holder _ self ownerThatIsA: StepHolderElementMorph.
+	holder ifNotNil: [holder fit]! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/30/2009 07:25'!
+representsNil
+
+	^self isLast & expression contents isNil! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/11/2009 23:09'!
+stack
+	| list step |
+	list _ OrderedCollection with: self.
+	step _ self.
+	[step next notNil] whileTrue: [
+		step _ step next.
+		list add: step ].
+	^list
+	! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/11/2009 23:21'!
+stackExtent
+	| w h |
+	w _ self width.
+	h _ 0.
+	self stack do: [:each|
+		w _ w max: each width.
+		h _ h + each height].
+	h _ h - ((self borderWidth * 2) * (self stack size -1)).
+	^w@h! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 00:41'!
+unHilite
+
+	oldColor ifNotNil: [
+		self color: oldColor]! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 20:52'!
+wantsDroppedMorph: aMorph event: evt
+
+	^next isNil & (aMorph isKindOf: self class) & (self ownerThatIsA: ElementPaletteMorph) isNil
+! !
+
+
+!PrimitiveElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/18/2009 22:54'!
+addExpression
+	expression _ TextBoxElementMorph new label: 'primitive '.
+	self addMorphFront: expression.! !
+
+!PrimitiveElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/23/2009 02:19'!
+asSmalltalk
+	^'<',expression contents, '>'
+! !
+
+!PrimitiveElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/18/2009 22:58'!
+contents: aString
+	expression label: aString! !
+
+!PrimitiveElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/18/2009 23:13'!
+initialize
+	super initialize.
+	color _ Color yellow darker! !
+
+!PrimitiveElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/19/2009 16:47'!
+wantsDroppedMorph: aMorph event: evt
+
+	^next isNil & (aMorph isKindOf: StepElementMorph)! !
+
+
+!ReturnElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 20:21'!
+addLabel
+	label _ StringMorph contents: ' ^' font: self labelFont.
+	label color: self labelColor.
+	self addMorphFront: label.
+! !
+
+!ReturnElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/23/2009 01:43'!
+asSmalltalk
+	^'^ ',super asSmalltalk! !
+
+!ReturnElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 23:01'!
+drawOn: aCanvas 
+
+	|r bw indent dent bw2 bw3 |
+	bw _ self borderWidth.
+	bw2 _ bw * 2.
+	bw3 _ bw * 3.
+	indent _ bw * 5.
+	dent _ bw * 5.
+
+	"border"
+	"top"
+	r _ Rectangle origin: ((self left + bw) @ self top) corner: (self left + indent) @ (self top + bw).
+	aCanvas fillRectangle: r color: self borderColorVeryLight.
+
+	r _ Rectangle origin: ((self left + indent - bw) @ (self top + bw)) corner: (self left + indent) @ (self top + bw3).
+	aCanvas fillRectangle: r color: self borderColorDark.
+
+	r _ Rectangle origin: ((self left + indent) @ (self top + bw2)) corner: (self left + indent + dent + bw) @ (self top + bw3).
+	aCanvas fillRectangle: r color: self borderColorVeryLight.
+
+	r _ Rectangle origin: ((self left + indent + dent) @ (self top)) corner: (self left + indent + dent + bw) @ (self top + bw2).
+	aCanvas fillRectangle: r color: self borderColorLight.
+
+	r _ Rectangle origin: ((self left + indent + dent + bw) @ (self top)) corner: (self right) @ (self top + bw).
+	aCanvas fillRectangle: r color: self borderColorVeryLight.
+
+
+	"left"
+	r _ Rectangle origin: (self topLeft) corner: (self left + bw) @ (self bottom - bw3).
+	aCanvas fillRectangle: r color: self borderColorLight.
+
+	"right"
+	r _ Rectangle origin: ((self right - bw) @ (self top + bw)) corner: (self right @ (self bottom - bw2)).
+	aCanvas fillRectangle: r color: self borderColorDark.
+
+	"bottom"
+	r _ Rectangle origin: (self left @ (self bottom - bw3)) corner: (self right - bw) @ (self bottom - bw2).
+	aCanvas fillRectangle: r color: self borderColorVeryDark.
+
+	"body"
+"	aCanvas fillRectangle: (Rectangle origin: (self left + bw) @ (self top + bw3) corner: (self right - bw) @ (self bottom - bw)) color: Color red."
+
+	aCanvas fillRectangle: (Rectangle origin: (self left + bw) @ (self top + bw3) corner: (self right - bw) @ (self center y - bw)) color: color twiceLighter.
+
+	aCanvas fillRectangle: (Rectangle origin: (self left + bw) @ (self center y - bw) corner: (self right - bw) @ (self center y)) color: color lighter.
+
+	aCanvas fillRectangle: (Rectangle origin: (self left + bw) @ (self center y) corner: (self right - bw) @ (self bottom - bw3)) color: color.
+
+
+	aCanvas fillRectangle: (Rectangle origin: (self left + bw) @ (self top + bw) corner: (self left + indent - bw) @ (self top + bw3)) color: color twiceLighter.
+
+	aCanvas fillRectangle: (Rectangle origin: (self left + indent + dent + bw) @ (self top + bw) corner: (self right - bw) @ (self top + bw3)) color: color twiceLighter.
+
+! !
+
+!ReturnElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/12/2009 21:04'!
+fit
+
+	| cw bw y|
+	label ifNil: [^self].
+	bw _ self borderWidth.
+	cw _ self labelFont widthOf: $ .
+
+	self width: expression width + label width + cw + (bw * 3).
+	self height: expression height + (bw * 7).
+
+
+	label position: (self left + bw) @ (bounds center - (label extent // 2)) y.
+
+	expression position: (label right + cw) @ (bounds center - (expression extent // 2)) y.
+
+	(owner respondsTo: #fit)
+		ifTrue: [owner fit]! !
+
+!ReturnElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/29/2009 23:02'!
+initialize
+	super initialize.
+	color _ Color red twiceDarker.
+	self addLabel.
+	self fit.! !
+
+!ReturnElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 22:28'!
+wantsDroppedMorph: aMorph event: evt
+
+	^false! !
+
+
+!StepHolderElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/23/2009 02:24'!
+asSmalltalk
+	|stack ws|
+	contents ifNil: [^''].
+	stack _ contents stack.
+	ws _ WriteStream on: String new.
+	stack do: [:eachStep|
+		ws nextPutString: eachStep asSmalltalk.
+		(eachStep == stack last)
+			ifFalse: [ws nextPut: $.;cr]].
+	^ws contents! !
+
+!StepHolderElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/13/2009 22:04'!
+drawOn: aCanvas 
+
+	|r bw indent dent bw2 bw3 |
+
+"	contents ifNotNil: [^aCanvas fillRectangle: self bounds color: owner color]."
+	bw _ self borderWidth.
+	bw2 _ bw * 2.
+	bw3 _ bw * 3.
+	indent _ bw * 5.
+	dent _ bw * 5.
+
+	"border"
+	"top"
+	r _ Rectangle origin: ((self left + bw) @ self top) corner: (self left + indent + bw) @ (self top + bw).
+	aCanvas fillRectangle: r color: self borderColorVeryDark.
+
+	r _ Rectangle origin: ((self left + indent) @ (self top + bw)) corner: (self left + indent + bw) @ (self top + bw3).
+	aCanvas fillRectangle: r color: self borderColorLight.
+
+	r _ Rectangle origin: ((self left + indent + bw) @ (self top + bw2)) corner: (self left + indent + dent + bw) @ (self top + bw3).
+	aCanvas fillRectangle: r color: self borderColorVeryDark.
+
+	r _ Rectangle origin: ((self left + indent + dent) @ (self top)) corner: (self left + indent + dent + bw) @ (self top + bw2).
+	aCanvas fillRectangle: r color: self borderColorDark.
+
+	r _ Rectangle origin: ((self left + indent + dent + bw) @ (self top)) corner: (self right) @ (self top + bw).
+	aCanvas fillRectangle: r color: self borderColorVeryDark.
+
+
+	"left"
+	r _ Rectangle origin: (self topLeft) corner: (self left + bw) @ (self bottom - bw3).
+	aCanvas fillRectangle: r color: self borderColorDark.
+
+	"right"
+	r _ Rectangle origin: ((self right - bw) @ (self top + bw)) corner: (self right @ (self bottom - bw2)).
+	aCanvas fillRectangle: r color: self borderColorLight.
+
+	"bottom"
+	r _ Rectangle origin: (self left @ (self bottom - bw3)) corner: (self right - bw) @ (self bottom - bw2).
+	aCanvas fillRectangle: r color: self borderColorVeryLight.
+
+"	r _ Rectangle origin: (self left @ (self bottom - bw3)) corner: (self left + indent) @ (self bottom - bw2).
+	aCanvas fillRectangle: r color: self borderColorVeryLight.
+
+	r _ Rectangle origin: (self left + indent) @ (self bottom - bw3) corner: (self left + indent + bw) @ (self bottom - bw).
+	aCanvas fillRectangle: r color: self borderColorDark.
+
+	r _ Rectangle origin: (self left + indent) @ (self bottom - bw) corner: (self left + indent + dent - bw) @ (self bottom).
+	aCanvas fillRectangle: r color: self borderColorVeryLight.
+
+	r _ Rectangle origin: (self left + indent + dent - bw) @ (self bottom - bw2) corner: (self left + indent + dent) @ (self bottom).
+	aCanvas fillRectangle: r color: self borderColorLight.
+
+	r _ Rectangle origin: (self left + indent + dent - bw) @ (self bottom - bw3) corner: (self right - bw) @ (self bottom - bw2).
+	aCanvas fillRectangle: r color: self borderColorVeryLight.
+"
+	"body"
+	aCanvas fillRectangle: (Rectangle origin: (self left + bw) @ (self top + bw3) corner: (self right - bw) @ (self bottom - bw3)) color: color.
+
+	aCanvas fillRectangle: (Rectangle origin: (self left + bw) @ (self top + bw) corner: (self left + indent) @ (self top + bw3)) color: color.
+
+	aCanvas fillRectangle: (Rectangle origin: (self left + indent + dent + bw) @ (self top + bw) corner: (self right - bw) @ (self top + bw3)) color: color.
+
+"	aCanvas fillRectangle: (Rectangle origin: (self left + indent + bw) @ (self bottom - bw3) corner: (self left + indent + dent - bw) @ (self bottom - bw)) color: color."
+! !
+
+!StepHolderElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 20:55'!
+fit
+	| h |
+
+	(owner isKindOf: MethodElementMorph) & (self ownerThatIsA: ElementsMethodEditorMorph) notNil
+		ifTrue: [ ^self fitMethod ].
+
+	contents isNil
+		ifTrue: [
+			h _ MessageElementMorph labelFont height.
+			self extent: (h * 1.8) @ (h * 1.2)]
+		ifFalse: [
+			(owner isKindOf: MethodElementMorph).
+			self extent: contents stackExtent  + (self borderWidth * 2).
+			contents position: bounds center - (contents stackExtent // 2) ].
+	(owner respondsTo: #fit)
+		ifTrue: [owner fit]! !
+
+!StepHolderElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/2/2009 20:20'!
+fitMethod
+	| h |
+	h _ MessageElementMorph labelFont height.
+	self extent: (h * 1.8) @ (h * 1.2).
+	contents ifNotNil: [
+		contents position: self position + self borderWidth].
+	(owner respondsTo: #fit)
+		ifTrue: [owner fit]! !
+
+!StepHolderElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/10/2009 10:53'!
+mouseEnterDragging: evt
+	"Handle a mouseEnterDragging event. The mouse just entered my bounds with a button pressed or laden with submorphs. This default implementation does nothing."
+
+	| m |
+	evt hand hasSubmorphs ifFalse: [^self].
+	m _ evt hand submorphs first.
+	(self wantsDroppedMorph: m event: evt)
+		ifTrue: [
+			self extent: m stackExtent  + (self borderWidth * 2).
+			self hilite .
+			(owner respondsTo: #fit)
+			ifTrue: [owner fit]]! !
+
+!StepHolderElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/5/2009 20:52'!
+wantsDroppedMorph: aMorph event: evt
+
+	^contents isNil & (aMorph isKindOf: StepElementMorph) & (self ownerThatIsA: ElementPaletteMorph) isNil
+
+! !
+
+
+!SyntaxElementMorph class methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 20:38'!
+classNameFrom: aUserString
+	"answer a camel-cased uppercased String"
+
+	^(aUserString allWordsCapitalized reject: [:c|
+		c = $ ]) capitalized! !
+
+!SyntaxElementMorph class methodsFor: 'as yet unclassified' stamp: 'jens 2/2/2009 01:19'!
+isDecompilable: selector class: class
+
+	|  original compiled text node|
+	original _ class methodDict at: selector.
+	text _ ((class decompilerClass new)
+		decompile: selector in: class method: original) printString.
+	node _ Compiler new 
+		compile: text 
+		in: class 
+		notifying: nil 
+		ifFail: [self inform: 'compilation failed'].
+	compiled _ node generate: #(0 0 0 0).
+	original = compiled
+		ifFalse: [Transcript nextPut: $-].
+	^original = compiled
+		
+		! !
+
+!SyntaxElementMorph class methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 20:42'!
+objectNameFrom: aUserString
+	"answer a camel-cased String beginning with a lowercase character"
+
+	|ans|
+	ans _ self classNameFrom: aUserString.
+	ans at: 1 put: (ans at: 1) asLowercase.
+	^ans! !
+
+!SyntaxElementMorph class methodsFor: 'as yet unclassified' stamp: 'jens 2/16/2009 20:55'!
+selectorFrom: aUserString
+	"answer a camel-cased Symbol beginning with a lowercase character"
+
+	|ans ws char|
+	ans _ self classNameFrom: aUserString.
+	ans at: 1 put: (ans at: 1) asLowercase.
+	ws _ WriteStream on: String new.
+	1 to: ans size do: [:i|
+		char _ ans at: i.
+		(char isUppercase and: [ (ans at: i - 1) = ($:)])
+			ifTrue: [ws nextPut: char asLowercase]
+			ifFalse: [ws nextPut: char]].
+	^ws contents asSymbol! !
+
+!SyntaxElementMorph class methodsFor: 'as yet unclassified' stamp: 'jens 1/30/2009 00:50'!
+test
+	1 even ifTrue:[] ifFalse:[^'yes']! !
+
+!SyntaxElementMorph class methodsFor: 'as yet unclassified' stamp: 'jens 2/2/2009 01:21'!
+testAllMethods
+	"SyntaxElementMorph testAllMethods"
+
+	| eachClass methods original compiled element|
+	Smalltalk classNames do: [: className |
+		eachClass _ Smalltalk classNamed: className.
+		methods _ eachClass methodDict.
+		methods keysDo: [ :eachSelector|
+			(self isDecompilable: eachSelector class: eachClass)
+				ifTrue: [
+					original _ methods at: eachSelector.
+					element _ ((eachClass decompilerClass new)
+						decompile: eachSelector 
+						in: eachClass 
+						method: original) asSyntaxElement.
+					compiled _ element asCompiledMethodForClass: eachClass.
+					original = compiled
+						ifTrue: [Transcript show:'.']
+						ifFalse: [Transcript cr; 
+							show: className asString, ' -> ', 
+								eachSelector printString; cr]]]]
+		
+		! !
+
+!SyntaxElementMorph class methodsFor: 'as yet unclassified' stamp: 'jens 1/29/2009 00:31'!
+testAllOriginalMethods
+
+	| eachClass methods original compiled text node|
+	Smalltalk classNames do: [: className |
+		eachClass _ Smalltalk classNamed: className.
+		methods _ eachClass methodDict.
+		methods keysDo: [ :eachSelector|
+			original _ methods at: eachSelector.
+			text _ ((eachClass decompilerClass new)
+				decompile: eachSelector in: eachClass method: original) printString.
+			node _ Compiler new 
+				compile: text 
+				in: eachClass 
+				notifying: nil 
+				ifFail: [self inform: 'compilation failed'].
+			compiled _ node generate: #(0 0 0 0).
+			original = compiled
+				ifTrue: [Transcript show:'.']
+				ifFalse: [Transcript cr; 
+					show: className asString, ' -> ', 
+						eachSelector printString; cr]]]
+		
+		! !
+
+!SyntaxElementMorph class methodsFor: 'as yet unclassified' stamp: 'jens 2/4/2009 23:37'!
+wordsFrom: camelCase
+	| ws cap |
+	
+	cap _ camelCase first isUppercase.
+
+	(camelCase = 'ifTrue')
+		ifTrue: [^'yes'].
+	(camelCase = 'ifFalse')
+		ifTrue: [^'no '].
+	(camelCase = '_')
+		ifTrue: [^':='].
+
+	ws _ WriteStream on: String new.
+
+	camelCase do: [:c|
+		c isUppercase 
+			ifTrue: [ 
+			ws nextPut: $ ; 
+			nextPut: (cap ifTrue: [c] ifFalse: [c asLowercase ])]
+			ifFalse: [ 
+				ws nextPut: c.
+				(c = ($:)) ifTrue: [ws nextPut: $ ]]].
+	^ws contents
+! !
+
+
+!MessageElementMorph class methodsFor: 'as yet unclassified' stamp: ' jens 1/8/2009 14:06'!
+labelFont
+	^StrikeFont fontName: 'Verdana' size: 10! !
+
+
+!TextBoxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/22/2009 23:53'!
+contents
+	^label contents! !
+
+!TextBoxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 20:37'!
+fit
+	label ifNil: [^self ].
+	self extent: label extent + (self borderWidth * 2).
+	self width: (self width + (self labelFont widthOf: $ )).
+	label position: bounds center - (label extent // 2).
+	(owner respondsTo: #fit)
+		ifTrue: [owner fit]
+! !
+
+!TextBoxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 20:43'!
+handlesMouseDown: evt
+	"Return true if this morph wants to receive mouseDown events (i.e., mouseDown:, mouseMove:, mouseUp:). The default response is false; subclasses that implement mouse messages should override this to return true." 
+
+	^ true
+! !
+
+!TextBoxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 22:16'!
+initialize
+	super initialize.
+	color _ Color white.
+	self fit! !
+
+!TextBoxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 21:09'!
+label: aString
+	label ifNil: [
+		label _ StringElementMorph contents: aString font: self labelFont.
+		label color: self labelColor.
+		self addMorphFront: label ].
+	label contents: aString.
+	self fit
+! !
+
+!TextBoxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 20:34'!
+labelColor
+	^Color black! !
+
+!TextBoxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 22:14'!
+labelFont
+	^StrikeFont fontName: 'Verdana' size: 9! !
+
+!TextBoxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 21:15'!
+layoutChanged
+
+	super layoutChanged.
+	self resizeToLabel.! !
+
+!TextBoxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 20:46'!
+mouseDown: evt
+	"Handle a mouse down event. This default implementation does nothing."
+	label launchMiniEditor: evt! !
+
+!TextBoxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 21:25'!
+resizeToLabel
+	| le h ne |
+	label ifNil: [^self ].
+
+	le _ (label extent + (self borderWidth * 2) + ((self labelFont widthOf: $ ) @ 0)).
+	h _ MessageElementMorph labelFont height.
+	ne _ ( h max: le x ) @ ( h max: le y).
+	(self extent = ne) ifFalse: [self extent: ne ].
+
+	(owner respondsTo: #fit)
+		ifTrue: [owner fit]
+! !
+
+!TextBoxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 1/14/2009 22:19'!
+wantsDroppedMorph: aMorph event: evt
+
+	^false! !
+
+
+!TriangleButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 23:08'!
+borderColorDark
+	^owner color twiceDarker! !
+
+!TriangleButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 23:08'!
+borderColorLight
+	^owner color twiceLighter lighter! !
+
+!TriangleButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 23:09'!
+borderColorVeryDark
+	^owner color twiceDarker darker! !
+
+!TriangleButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 23:08'!
+borderColorVeryLight
+	^owner color twiceLighter twiceLighter lighter! !
+
+!TriangleButtonMorph methodsFor: 'as yet unclassified' stamp: 'jens 2/3/2009 23:18'!
+drawOn: aCanvas
+	aCanvas
+		line: self topLeft + 1 to: (self topRight + (-1@1)) color: self borderColorVeryLight;
+		line: (self topRight + (-1@1)) to: (self center x @ (self bottom - 1)) color: self borderColorVeryDark;
+		line: self center x @ (self bottom - 1) to: self topLeft + 1 color: self borderColorLight
+! !
+
+
+!VariableNode methodsFor: 'elements' stamp: 'jens 1/20/2009 00:11'!
+asSyntaxElement
+
+	^ObjectElementMorph new
+		label: name! !
+
+DialogBoxMorph subclass: #ElementsEditorFrameMorph
+	instanceVariableNames: 'headerMorph bodyMorph answerField definition palette template receiver bin atomicityToggle resizeMorph resizeOffset editor initialMethod initialClass '
+	classVariableNames: 'UserPos UserSize '
+	poolDictionaries: ''
+	category: 'Scratch-BYOB'!
+
+!CommandBlockMorph methodsFor: 'elements' stamp: 'jens 6/28/2010 22:51'!
+editElements
+	| cls sel |
+	sel _ selector.
+	cls _ receiver class classThatUnderstands: sel.
+	cls ifNil: [cls _ ScratchProcess].
+	(cls canUnderstand: sel)
+		ifFalse: [isSpecialForm ifTrue: [
+			(#(getBlockVar: getVar:) includes: sel) ifTrue: [sel _ #getVar].
+			(#(setBlockVar:to: setVar:to:) includes: sel) ifTrue: [sel _ #setVar].
+			(#(changeBlockVar:by: changeVar:by:) includes: sel) ifTrue: [sel _ #changeVar]]].
+	ElementsEditorFrameMorph new 
+		onMethod: sel ofClass: cls! !
+
+
+!ElementsEditorFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:07'!
+centerOnScreen
+	super centerOnScreen.
+	self updateResizeMorph! !
+
+!ElementsEditorFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:07'!
+definition: aCustomBlockDefinition
+
+	definition _ aCustomBlockDefinition.
+	template _ CustomCommandBlockMorph template.
+	template receiver: receiver.
+	template userSpec: definition userSpec.
+	bin addMorph:(template position: bin position + (10@10)).
+	self buildScript.
+	self buildVariables.
+	self buildAtomicityToggle.
+	self buildAnswerField.! !
+
+!ElementsEditorFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 12/14/2009 03:09'!
+extent: aPoint
+	
+	| w newExtent min|
+
+	min _ self class minExtent.
+
+	newExtent _ aPoint max: min.
+
+	bounds extent = newExtent ifFalse: [
+		self changed.
+		bounds _ bounds topLeft extent: newExtent.
+		self layoutChanged.
+		self changed].
+
+	self fixLayoutForExtent: newExtent.
+
+	UserPos isNil & resizeOffset isNil ifTrue: [
+		w _ self world.
+		w ifNotNil: [self position: w center - (self extent // 2)]].  "center on screen"
+
+	self keepOnScreen
+! !
+
+!ElementsEditorFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:58'!
+fixLayoutForExtent: aPoint
+
+	super fixLayoutForExtent: aPoint.
+
+	titleBin ifNotNil: [ titleBin width: aPoint x - 40 ].
+
+	editor ifNil: [^self ].
+
+	editor extent: aPoint - (65 @ 105).
+
+	self updateResizeMorph! !
+
+!ElementsEditorFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:42'!
+getUserResponse
+	"Wait for the user to respond, then report their response. The symbol #cancel is returned if the user wishes to cancel the operation. True/false is returned if they respond yes/no, and a string is returned if this this a string input dialog and they don't cancel."
+	"Details: This is invoked synchronously from the caller. In order to keep processing inputs and updating the screen while waiting for the user to respond, this method has its own version of the World's event loop."
+
+	| w |
+	self openInWorld.
+
+	editor onMethod: initialMethod ofClass: initialClass.
+
+	UserPos isNil 
+		ifTrue: [ self centerOnScreen ]
+		ifFalse: [self snapToUserDimensions ].
+		
+	w _ self world.
+	self buttons size > 0 ifTrue: [
+		w activeHand newKeyboardFocus: self buttons last].
+	tabFields size > 0 ifTrue: [
+		w activeHand newKeyboardFocus: (tabFields at: 1)].
+
+	done _ false.
+	[done] whileFalse: [w doOneCycle].  "wait for user to press a button"
+
+	^ response
+! !
+
+!ElementsEditorFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:07'!
+handlesMouseDown: evt
+	^true! !
+
+!ElementsEditorFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:16'!
+initialize
+	super initialize.
+	self title: 'Elements Editor'.
+	resizeMorph _ ScratchResizeMorph ofType: #corner.
+	
+	editor := ElementsMethodEditorMorph new.
+
+	mainColumn addMorph: editor.
+
+	self addMorph: resizeMorph.
+
+
+! !
+
+!ElementsEditorFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:07'!
+justDroppedInto: aMorph event: evt
+	"Never embed myself in a morph (e.g. the Stage)."
+
+	super justDroppedInto: aMorph event: evt.
+	self keepOnScreen
+! !
+
+!ElementsEditorFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:07'!
+keepOnScreen
+
+	| min |
+	min _ self class minExtent.
+
+	self left < 0 ifTrue: [ self left: 0].
+	self top < 0 ifTrue: [ self top: 0].
+
+	self right > Display extent x
+		ifTrue: [ resizeOffset 
+			ifNil: [ 
+				self left: ((Display extent x - self width) max: 0).
+				(self right > Display extent x and: [self width > min x])
+					ifTrue: [self width: Display extent x - self left ]]
+			ifNotNil: [self width: Display extent x - self left]].
+
+	self bottom > Display extent y
+		ifTrue: [ resizeOffset 
+			ifNil: [	
+				self top: ((Display extent y - self height) max: 0). 
+				(self bottom > Display extent y and: [self height > min y])
+					ifTrue: [self height: Display extent y - self top]]
+			ifNotNil: [self height: Display extent y - self top]].
+
+! !
+
+!ElementsEditorFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:07'!
+mouseDown: evt
+	"Handle a mouse click. Left button either drags or performs click action. Right button brings up a menu."
+
+	| p |
+	p _ evt cursorPoint.
+	((resizeMorph bounds expandBy: 4) containsPoint: p)
+		ifFalse: [evt hand grabMorph: self]
+		ifTrue: [resizeOffset _ self bottomRight - p]
+! !
+
+!ElementsEditorFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:07'!
+mouseMove: evt
+
+	resizeOffset ifNotNil: [
+		self extent: (evt cursorPoint - self topLeft) + resizeOffset ]
+
+! !
+
+!ElementsEditorFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:07'!
+mouseUp: evt
+
+	resizeOffset _ nil.
+! !
+
+!ElementsEditorFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:41'!
+onMethod: sel ofClass: cls
+
+	initialClass _ cls.
+	initialMethod _ sel.
+	self 
+		withButtonsForYes: false no: false okay: true cancel: false;
+		getUserResponse
+! !
+
+!ElementsEditorFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:07'!
+rememberUserDimensions
+	self class setUserPos: self position size: self extent! !
+
+!ElementsEditorFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:07'!
+snapToUserDimensions
+
+	self extent: UserSize.
+	UserPos ifNotNil: [
+		self position: UserPos ].
+! !
+
+!ElementsEditorFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:07'!
+step
+	resizeOffset notNil | (owner isKindOf: HandMorph)
+		ifTrue: [^self ].
+	self keepOnScreen 
+! !
+
+!ElementsEditorFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:07'!
+updateResizeMorph
+	resizeMorph ifNotNil: [
+		resizeMorph position: self bottomRight - "resizeMorph extent - " bottomRightForm width ]
+! !
+
+!ElementsEditorFrameMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 01:33'!
+yes
+	"Yes button was pressed."
+	SyntaxElementMorph allSubInstances do: [:element |
+		(element ownerThatIsA: ElementsMethodEditorMorph)
+			ifNil: [element delete]].
+	self rememberUserDimensions.
+	super yes.! !
+
+
+!ElementsEditorFrameMorph class methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:07'!
+initialize
+	"BlockEditorFrameMorph initialize"
+	self resetDimensions! !
+
+!ElementsEditorFrameMorph class methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:47'!
+minExtent
+	^600 @ 430.! !
+
+!ElementsEditorFrameMorph class methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:07'!
+resetDimensions
+	UserPos _ nil.
+	UserSize _ self minExtent.! !
+
+!ElementsEditorFrameMorph class methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:07'!
+setUserPos: aPoint size: anExtent
+	UserPos _ aPoint.
+	UserSize _ anExtent.! !
+
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'EMP 7/11/2015 09:06'!
+about
+	self inform: '- Elements -
+
+a graphical Smalltalk
+------------------------------
+experimental release of Aug. 24 2009
+ 
+written by Jens Mönig (jens@moenig.org)
+ported by Edward P. (epedemont@icloud.com)
+all rights reserved
+ 
+inspired by Scratch from the MIT Media Lab
+and based in part on the Scratch Source Code.
+Implemented in Squeak and in itself.'! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 01:29'!
+contextMenu
+	|m|
+	m _ CustomMenu new.
+	m add: 'clean up' action: #arrangeElements.
+"
+	m addLine.
+	fillScreenOn
+		ifTrue: [
+			m add: 'switch to development mode' action: #developmentMode.
+]
+		ifFalse: [m add: 'switch to user mode' action: #userMode.
+			m add: 'save image in user mode' action: #saveImage ].
+"
+	m addLine.
+	m add: 'about...' action: #about.
+
+	^m! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 00:59'!
+onMethod: aSelector ofClass: aClass
+	methodModified _ false.
+	currentClass _ aClass.
+	classChooser class: aClass.
+	currentMethod _ #aSelector.
+	methodChooser selector: aSelector.
+	methodChooser class: aClass.
+	palette class: aClass.
+"	self refresh"! !
+
+!ElementsMethodEditorMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/24/2009 20:10'!
+stepTime
+	^0! !
+
+ElementsEditorFrameMorph initialize!
+
+!ElementPaletteMorph class methodsFor: 'as yet unclassified' stamp: 'jens 6/2/2009 22:31'!
+basics
+	^self new
+		addElement: StepElementMorph new;
+		addElement: ReturnElementMorph new;
+		addElement: PrimitiveElementMorph new;
+		addElement: BlockElementMorph new;
+		addElement: (ObjectElementMorph new label: 'self');
+		addElement: (ObjectElementMorph new label: 'super');
+		addElement: (ObjectElementMorph new label: 'true');
+		addElement: (ObjectElementMorph new label: 'false');
+"		addElement: (ObjectElementMorph new label: 'thisContext');"
+		addElement: (LiteralElementMorph new);
+"		addElement: (MessageElementMorph new selector: #new);"
+		addElement: MessageElementMorph new assign;
+		addElement: MessageElementMorph new yesNo
+! !
+
+!ElementPaletteMorph class methodsFor: 'as yet unclassified' stamp: 'jens 6/2/2009 22:55'!
+classVarsFor: aClass
+	| pal |
+	pal _ self new.
+	aClass classVarNames asSortedCollection do: [:vname|
+		pal addElement: (ObjectElementMorph new label: vname asString) ].
+
+	pal addElement: ((StringMorph contents: ' inherited:' font: self labelFont) color: self labelColor).
+
+	(aClass allClassVarNames reject: [:iv | aClass classVarNames includes: iv]) asSortedCollection do: [:vname|
+		pal addElement: (ObjectElementMorph new label: vname asString) ].
+
+	^pal
+! !
+
+!ElementPaletteMorph class methodsFor: 'as yet unclassified' stamp: 'jens 6/2/2009 22:53'!
+instVarsFor: aClass
+	| pal |
+	pal _ self new.
+	aClass instVarNames asSortedCollection do: [:vname|
+		pal addElement: (ObjectElementMorph new label: vname asString) ].
+
+	pal addElement: ((StringMorph contents: ' inherited:' font: self labelFont) color: self labelColor).
+
+	(aClass allInstVarNames reject: [:iv | aClass instVarNames includes: iv]) asSortedCollection do: [:vname|
+		pal addElement: (ObjectElementMorph new label: vname asString) ].
+
+	^pal
+! !
+
+!ElementPaletteMorph class methodsFor: 'as yet unclassified' stamp: 'jens 6/2/2009 22:51'!
+messagesFor: aClass
+	
+	| pal me |
+	pal _ self new.
+	pal addElement: ((StringMorph contents: (SyntaxElementMorph wordsFrom: aClass name asString) font: self labelFont) color: self labelColor).
+	aClass selectors asSortedCollection do: [:selector|
+		me _ MessageElementMorph new selector: selector.
+		((selector asString includes: ($:)) not and: [
+			(aClass lookupSelector: selector) numArgs > 0])
+				ifTrue: [me beBinary].
+		pal addElement: me ].
+
+	pal addElement: ((StringMorph contents: ' inherited:' font: self labelFont) color: self labelColor).
+
+	(aClass allSelectors reject:[:sel| aClass selectors includes: sel ]) asSortedCollection do: [:selector|
+		me _ MessageElementMorph new selector: selector.
+		((selector asString includes: ($:)) not and: [
+			(aClass lookupSelector: selector) numArgs > 0])
+				ifTrue: [me beBinary].
+		pal addElement: me ].
+
+
+	^pal
+! !
+
+
+!MethodNode methodsFor: 'elements' stamp: 'jens 6/4/2009 17:09'!
+asElementFromText
+	| se |
+	se _ self asUnnamedMethodElement.
+	temporaries isEmpty
+		ifTrue: [^se steps]
+		ifFalse: [^se]! !
+
+!MethodNode methodsFor: 'elements' stamp: 'jens 6/4/2009 17:10'!
+asUnnamedMethodElement
+	| element pe be |
+	element _ MethodElementMorph new.
+
+	temporaries do: [:temp |
+		element addVariableNamed: temp key ].
+
+	primitive > 0 ifTrue:
+			[(primitive between: 255 and: 519) ifFalse: 
+				[pe _ self primitiveElement.
+				element addStep: pe]].
+
+	be _ (block asStackOfSteps).
+	be ifNotNil:[	element addStep: be].
+	^element! !
+
+
+!ParagraphEditor methodsFor: 'editing keys' stamp: 'jens 6/4/2009 23:54'!
+elementFromSelection: characterStream 
+	"Called when user hits cmd-t."
+
+	sensor keyboard.	
+	self terminateAndInitializeAround: [self elementFromSelection].
+	^ true! !
+
+!ParagraphEditor methodsFor: 'do-its' stamp: 'jens 6/4/2009 23:52'!
+elementFromSelection
+	"Treat the current selection as a syntax element. Create the element and put it into the curren hand"
+
+	self lineSelectAndEmptyCheck: [^ ''].
+	self selection string asElement! !
+
+
+!ParagraphEditor class methodsFor: 'class initialization' stamp: 'jens 6/5/2009 00:00'!
+initializeTextEditorMenus   "ParagraphEditor initializeTextEditorMenus"
+		"Initialize the yellow button pop-up menu and corresponding messages."
+
+	TextEditorYellowButtonMenu _ SelectionMenu
+		labels: 
+'find...(f)
+find again (g)
+set search string (e)
+do again (j)
+undo (z)
+copy (c)
+cut (x)
+paste (v)
+paste...
+do it (d)
+print it (p)
+inspect it (i)
+as element (t)
+accept (s)
+cancel (l)
+show bytecodes
+more...' 
+		lines: #(3 5 9 13 14 15)
+		selections: #(find findAgain setSearchString again undo copySelection cut paste pasteRecent doIt printIt inspectIt elementFromSelection accept cancel showBytecodes shiftedYellowButtonActivity)
+! !
+
+!ParagraphEditor class methodsFor: 'keyboard shortcut tables' stamp: 'jens 6/4/2009 23:56'!
+initializeCmdKeyShortcuts
+	"Initialize the (unshifted) command-key shortcut table."
+	"NOTE: if you don't know what your keyboard generates, use Sensor kbdTest"
+	"ParagraphEditor initialize"
+
+	| cmdMap cmds |
+	cmdMap _ Array new: 256 withAll: #noop:.  "use temp in case of a crash"
+	cmdMap at: ( 1 + 1) put: #cursorHome:.			"home key"
+	cmdMap at: ( 4 + 1) put: #cursorEnd:.			"end key"
+	cmdMap at: ( 8 + 1) put: #backspace:.			"ctrl-H or delete key"
+	cmdMap at: (11 + 1) put: #cursorPageUp:.			"page up key"
+	cmdMap at: (12 + 1) put: #cursorPageDown:.		"page down key"
+	cmdMap at: (13 + 1) put: #crWithIndent:.			"cmd-Return"
+	cmdMap at: (27 + 1) put: #selectCurrentTypeIn:.	"escape key"
+	cmdMap at: (28 + 1) put: #cursorLeft:.			"left arrow key"
+	cmdMap at: (29 + 1) put: #cursorRight:.			"right arrow key"
+	cmdMap at: (30 + 1) put: #cursorUp:.				"up arrow key"
+	cmdMap at: (31 + 1) put: #cursorDown:.			"down arrow key"
+	cmdMap at: (32 + 1) put: #selectWord:.			"space bar key"
+	cmdMap at: (127 + 1) put: #forwardDelete:.		"del key"
+
+	'0123456789-=' do: [ :char | cmdMap at: (char asciiValue + 1) put: #changeEmphasis: ].
+	'([{''"<' do: [ :char | cmdMap at: (char asciiValue + 1) put: #enclose: ].
+	cmdMap at: ($, asciiValue + 1) put: #shiftEnclose:.
+
+	cmds _ #(
+		$a	selectAll:
+		$b	browseIt:
+		$c	copySelection:
+		$d	doIt:
+		$t	elementFromSelection:
+		$e	setSearchString:
+		$f	find:
+		$g	findAgain:
+		$i	inspectIt:
+		$j	doAgainOnce:
+		$k  offerFontMenu:
+		$l	cancel:
+		$m	implementorsOfIt:
+		$n	sendersOfIt:
+		$o	spawnIt:
+		$p	printIt:
+		$q	querySymbol:
+		$s	save:
+		$u	align:
+		$v	paste:
+		$w	backWord:
+		$x	cut:
+		$y	swapChars:
+		$z	undo:
+	).
+	1 to: cmds size by: 2 do: [ :i |
+		cmdMap at: ((cmds at: i) asciiValue + 1) put: (cmds at: i + 1).
+	].
+	CmdActions _ cmdMap
+! !
+
+
+!PluggableTextMorph methodsFor: 'menu commands' stamp: 'jens 6/5/2009 00:06'!
+elementFromSelection
+	self handleEdit: [textMorph editor elementFromSelection]! !
+
+
+!String methodsFor: 'elements' stamp: 'jens 6/4/2009 02:36'!
+asElement
+	^SyntaxElementMorph fromString: self! !
+
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 6/2/2009 23:43'!
+duplicate
+	World activeHand addMorph: super fullCopy! !
+
+!SyntaxElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 6/5/2009 00:16'!
+throwAway
+	self aboutToBeGrabbedBy: nil; delete! !
+
+
+!ArgumentElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 6/5/2009 00:50'!
+asSmalltalk
+
+	contents ifNil: [^'nil '].
+	((#(	BlockElementMorph
+		LiteralElementMorph
+		ObjectElementMorph
+	) includes: contents class printString asSymbol)
+		or: [owner isKindOf: StepElementMorph])
+		ifTrue: [^contents asSmalltalk].
+
+	(contents isKindOf: MessageElementMorph) ifTrue: [
+		contents isUnary ifTrue: [^contents asSmalltalk].
+
+		contents isBinary ifTrue: [
+			owner isKeywords ifTrue: [ ^contents asSmalltalk]]
+
+	].
+
+	^'(', contents asSmalltalk, ')'! !
+
+
+!BlockElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/27/2009 23:01'!
+contextMenu
+	|m|
+	m _ CustomMenu new.
+"	m add: 'duplicate' action: #duplicate. "
+	m add: 'delete' action: #throwAway.
+	m add: 'add variable...' action: #addVariable.
+	m addLine.
+	m add: 'show code...' action: #showGeneratedSmalltalk.
+	m add: 'show result...' action: #showResult.
+	m add: 'evaluate' action: #evaluate.
+	^m! !
+
+!BlockElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 6/4/2009 02:41'!
+evaluate
+	^Compiler evaluate: self asSmalltalk, ' value'! !
+
+!BlockElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 6/4/2009 02:24'!
+steps
+	^steps contents! !
+
+
+!LiteralElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/27/2009 23:01'!
+contextMenu
+	|m|
+	m _ CustomMenu new.
+"	m add: 'duplicate' action: #duplicate. "
+	m add: 'delete' action: #throwAway.
+	m addLine.
+	m add: 'show code...' action: #showGeneratedSmalltalk.
+
+	^m! !
+
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/27/2009 23:02'!
+contextMenu
+	|m|
+	m _ CustomMenu new.
+"	m add: 'duplicate' action: #duplicate. "
+	m add: 'delete' action: #throwAway.
+	self isRenameable
+		ifTrue: [
+			m add: 'rename...' action: #editSelector.
+			arguments isEmpty ifTrue: [
+				m add: 'add argument' action: #beBinary ].
+			m addLine ]
+		ifFalse: [m addLine ].
+	m add: 'show code...' action: #showGeneratedSmalltalk.
+	m add: 'show result...' action: #showResult.
+	m add: 'evaluate' action: #evaluate.
+	^m! !
+
+!MessageElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 6/5/2009 00:51'!
+isKeywords
+	^arguments size > 0 & self isBinary not! !
+
+
+!MethodElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 6/5/2009 00:35'!
+contextMenu
+	|m|
+	m _ super contextMenu.
+	self isRenameable ifTrue: [
+		m addLine.
+		m add: 'rename...' action: #editSelector ].
+	^m! !
+
+
+!ObjectElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/27/2009 23:02'!
+contextMenu
+	|m|
+	m _ CustomMenu new.
+"	m add: 'duplicate' action: #duplicate. "
+	m add: 'delete' action: #throwAway.
+	(owner class == PaletteElementMorph)
+		ifTrue: [m add: 'remove' action: #removeFromPalette ]
+		ifFalse: [
+		 	self isRenameable ifTrue: [
+				m add: 'rename...' action: #editLabel ]].
+	m addLine.
+	m add: 'show code...' action: #showGeneratedSmalltalk.
+
+	^m! !
+
+!ObjectElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 6/2/2009 22:28'!
+label: aString
+
+	super label: aString.
+
+	(owner isKindOf: PaletteElementMorph)
+		ifTrue: [^self color: owner ownerColor twiceDarker ].
+
+	(#('self' 'super' 'nil' 'true' 'false' 'thisContext') includes: aString)
+		ifTrue: [^self color: Color red darker].
+
+	aString first isUppercase
+		ifTrue: [
+			(Smalltalk classNames includes: aString asSymbol)
+				ifTrue: [^self color: Color magenta darker darker].
+			(Smalltalk keys includes: aString asSymbol)
+				ifTrue: [^self color: Color magenta twiceDarker darker].
+
+			^self color: Color blue twiceDarker ].
+
+	self color: Color blue darker..
+
+! !
+
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 8/27/2009 23:02'!
+contextMenu
+	|m|
+	m _ CustomMenu new.
+"	m add: 'duplicate' action: #duplicate. "
+	m add: 'delete' action: #throwAway.
+	m addLine.
+	m add: 'show code...' action: #showGeneratedSmalltalk.
+	m add: 'show result...' action: #showResult.
+	m add: 'evaluate' action: #evaluate.
+	^m! !
+
+!StepElementMorph methodsFor: 'as yet unclassified' stamp: 'jens 6/4/2009 01:44'!
+expression
+	^expression contents! !
+
+!CommandBlockMorph methodsFor: 'byob' stamp: 'EMP 7/11/2015 10:22'!rightButtonMenu	| menu sFrame choice spec |	menu _ CustomMenu new.	menu add: 'help' action: #presentHelpScreen.	(owner isKindOf: ScratchBlockPaletteMorph) ifFalse: [		menu addLine.		(#(+ - * / \\) includes: selector) ifTrue: [			#(+ - * / mod) with: #(+ - * / \\) do: [:s :op | menu add: s action: op]].		(#(< = >) includes: selector) ifTrue: [			#(< = >) do: [:op | menu add: op action: op]].		(#(& |) includes: selector) ifTrue: [			#(and or) with: #(& |) do: [:s :op | menu add: s action: op]].		menu addLine.		menu add: 'duplicate' action: #duplicate.				(self owner isKindOf: BlockMorph) ifFalse: [  "can't yet delete a blocks inside a script"			menu add: 'delete' action: #delete]].	menu addLine.	menu add: 'edit elements' action: #editElements.	sFrame _ self ownerThatIsA: ScratchFrameMorph.	(sFrame notNil and: [#(sensor: sensorPressed:) includes: selector]) ifTrue: [		menu addLine.		menu add: 'show ScratchBoard watcher' action: #showSensorBoard.		sFrame workPane scratchServer			ifNil: [menu add: 'enable remote sensor connections' action: #enableRemoteSensors]			ifNotNil: [menu add: 'disable remote sensor connections' action: #exitScratchSession]].	DebugMenu ifTrue: [		menu addLine.		menu add: 'show tuples' action: #showTuples].		(choice _ menu localize; startUp) ifNil: [^ self].	(#(presentHelpScreen duplicate fastDuplicate rename delete editElements inheritAttribute disinheritAttribute) includes: choice) ifTrue: [^ self perform: choice].	choice = #showSensorBoard ifTrue: [sFrame showSensorBoard. ^ self].	choice = #enableRemoteSensors ifTrue: [sFrame enableRemoteSensors. ^ self].	choice = #exitScratchSession ifTrue: [sFrame exitScratchSession. ^ self].	choice = #showTuples ifTrue: [^ self showTuples].	"change operator"	spec _ '%n ', choice, ' %n'.	'\\' = choice	ifTrue: [spec _ ScratchTranslator translationFor: '%n mod %n'].	'&' = choice	ifTrue: [spec _ ScratchTranslator translationFor: '%b and %b'].	'|' = choice	ifTrue: [spec _ ScratchTranslator translationFor: '%b or %b'].	self commandSpec: spec.	self selector: choice.! !
+
+!SyntaxElementMorph class methodsFor: 'as yet unclassified' stamp: 'jens 6/4/2009 02:33'!
+fromString: aString
+
+	|strg method compiler|
+	strg _ aString, '.^self'.
+	compiler _ Compiler new.
+	compiler from: (ReadStream on: strg)
+		class: nil class
+		context: nil
+		notifying: nil.
+
+	method _ compiler translate: (ReadStream on: strg) noPattern: true ifFail: nil.
+	World activeHand attachMorph: method asElementFromText
+
+	! !

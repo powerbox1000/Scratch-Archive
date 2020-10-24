@@ -1,0 +1,1 @@
+To use a Scratch addon using a .txt or .cs file, open a Scratch image, click the loop in the "R" in the Scratch logo > "turn fill-screen off" > white background > "open..." > "file list" > "replacethiswiththefilenameoftheextensionyouwanttouse.txt"/".cs" > [right-click] > "more..." > "fileIn" > Done!

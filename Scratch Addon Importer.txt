@@ -1,0 +1,61 @@
+'From MIT Squeak 0.9.4 (June 1, 2003) [No updates present.] on 18 June 2010 at 5:06:17 pm'!
+
+!ScratchFileChooserDialog methodsFor: 'initialization'!
+createAddonFileChooser
+    scratchFrame _ nil.
+    readingScratchFile _ true.
+    list _ ScratchFilePicker new extensions: #(#patch #cs #st #txt).
+    self removeAllMorphs.
+    bottomSpacer delete.
+    bottomSpacer _ nil.
+    mainColumn addMorphBack: list.
+    self title: 'Install Addon/Patch'.
+    list scratchInfoClient: nil.
+    mainColumn addMorphBack: (Morph new extent: 5 @ 9;
+         color: Color transparent);
+     addMorphBack: newTitleBin.
+    fileInfoColumn addMorphBack: buttonRow.
+    self addMorphBack: shortcutColumn;
+     addMorphBack: mainColumn;
+     addMorphBack: fileInfoColumn! !
+
+!ScratchFrameMorph methodsFor: 'menu/button actions'!
+addonChooser
+    | t1 t2 t3 t4 |
+    t1 _ ScratchFileChooserDialog new createAddonFileChooser;
+             type: #addon.
+    t2 _ t1 getUserResponse.
+    t2 = #cancelled ifTrue: [^ self].
+    t3 _ (FileDirectory forFileName: t2)
+                oldFileNamed: t2.
+    t4 _ t3 contentsOfEntireFile.
+    (ReadWriteStream
+        on: t4
+        from: 1
+        to: t4 size) fileIn! !
+
+!ScratchFrameMorph methodsFor: 'menu/button actions'!
+editMenu: t1 
+	| t2 |
+	t2 _ CustomMenu new.
+	t2 add: 'Undelete' action: #undoTool.
+	t2 addLine.
+	ScratchProcess blockHighlightMSecs <= 1
+		ifTrue: [t2 add: 'Start Single Stepping' action: #toggleSingleStepping]
+		ifFalse: [t2 add: 'Stop Single Stepping' action: #toggleSingleStepping].
+	t2 add: 'Set Single Stepping' action: #setSingleStepping.
+	t2 addLine.
+	t2 add: 'Compress Sounds' action: #compressSounds.
+	t2 add: 'Compress Images' action: #compressImages.
+	t2 addLine.
+	workPane showMotorBlocks
+		ifTrue: [t2 add: 'Hide Motor Blocks' action: #hideMotorBlocks]
+		ifFalse: [t2 add: 'Show Motor Blocks' action: #showMotorBlocks].
+
+t2 localize.
+t2 addLine.
+t2 add: 'Add addon/Patch...' action: #addonChooser
+	#(3 4 5 ) do: [:t3 | t2 labels at: t3 put: ((t2 labels at: t3)
+				copyFrom: 1 to: (t2 labels at: t3) size - 1)
+				, ScratchTranslator ellipsesSuffix].
+	t2 invokeOn: self at: t1 bottomLeft + (0 @ 10)! !

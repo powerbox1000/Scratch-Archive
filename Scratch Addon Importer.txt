@@ -51,10 +51,9 @@ editMenu: t1
 	workPane showMotorBlocks
 		ifTrue: [t2 add: 'Hide Motor Blocks' action: #hideMotorBlocks]
 		ifFalse: [t2 add: 'Show Motor Blocks' action: #showMotorBlocks].
-
+	t2 addLine.
+	t2 add: 'Add addon/Patch...' action: #addonChooser.
 t2 localize.
-t2 addLine.
-t2 add: 'Add addon/Patch...' action: #addonChooser
 	#(3 4 5 ) do: [:t3 | t2 labels at: t3 put: ((t2 labels at: t3)
 				copyFrom: 1 to: (t2 labels at: t3) size - 1)
 				, ScratchTranslator ellipsesSuffix].

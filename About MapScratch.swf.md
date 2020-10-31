@@ -1,0 +1,1 @@
+So, you might see a thing called MapScratch.swf. However, this file CANNOT be played through the online .swf player! To use it, launch Flash Player.exe; then click File > Open... > Browse... > [select MapScratch.swf] > Open > Ok > done! If you're a Linux user like me, use Wine. For more information about Wine, please see README.md.
